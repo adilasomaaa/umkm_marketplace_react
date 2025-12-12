@@ -13,11 +13,10 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
-} from "@heroui/react"; // Asumsi 'SortDescriptor' & 'Selection' diekspor dari sini
+} from "@heroui/react";
 import type { SortDescriptor, Selection } from "@heroui/react";
-import { ChevronDownIcon, PlusIcon, SearchIcon, MoreVerticalIcon } from "lucide-react";
+import { ChevronDownIcon, PlusIcon, SearchIcon, MoreVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"; 
 
 interface BaseFilter {
   key: string;
@@ -57,7 +56,6 @@ export interface DataTableProps<T> {
   sortDescriptor: SortDescriptor;
   setSortDescriptor: (descriptor: SortDescriptor) => void;
 
-  // Opsi Tambahan
   statusOptions?: { name: string; uid: string }[];
   statusColorMap?: Record<string, 'success' | 'danger' | 'warning' | 'default' | 'primary' | 'secondary'>;
   initialVisibleColumns?: string[];
@@ -74,7 +72,7 @@ function getNestedValue<T>(obj: T, path: string): any {
 
 export type Column<T> = {
   name: string;
-  uid: string // 'actions' adalah kolom spesial
+  uid: string;
   sortable?: boolean;
   defaultVisible?: boolean;
   renderCell?: (item: T) => React.ReactNode;
@@ -106,7 +104,6 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
   onDeleteItem,
   onViewItem,
 }: DataTableProps<T>) => {
-  // State internal untuk UI, tidak berhubungan dengan data fetching
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   const initialVisibleColumns = React.useMemo(() => {
     return new Set(
@@ -114,17 +111,22 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
     );
   }, [columns]);
   
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    initialVisibleColumns
-  );
-
-  // --- MEMOS & CALLBACKS ---
+  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(initialVisibleColumns);
 
   const headerColumns = React.useMemo(() => {
-    if (visibleColumns === 'all') return columns;
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid as string),
-    );
+    let filteredCols = columns.filter((column) => {
+      if (visibleColumns === 'all') return true;
+      return Array.from(visibleColumns).includes(column.uid as string);
+    });
+
+    const rowNumberColumn: Column<T> = {
+        name: '#',
+        uid: 'rowNumber',
+        sortable: false,
+        defaultVisible: true,
+    };
+    
+    return [rowNumberColumn, ...filteredCols];
   }, [visibleColumns, columns]);
 
   const onPageChange = React.useCallback(
@@ -158,25 +160,24 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
     setPaginationInfo((prev: any) => ({ ...prev, page: 1 }));
   }, [setFilterValue, setPaginationInfo]);
 
-
-  // --- RENDER FUNCTIONS ---
-
   const renderCell = React.useCallback((item: T, columnKey: React.Key) => {
     const column = columns.find((col) => col.uid === (columnKey as string));
 
-    // Prioritas 1: Cek apakah ada override dari komponen induk
     if (column?.renderCell) {
         return column.renderCell(item);
     }
 
-    // Prioritas 2: Jika tidak ada override, gunakan render default internal
     const cellValue = getNestedValue(item, columnKey as string);
 
     switch (columnKey) {
-      case 'name': // Asumsi kolom 'name' akan selalu menampilkan User
-        return (
-          cellValue as string
-        );
+      case 'rowNumber':
+          const index = data.findIndex(d => d.id === item.id);
+          if (index === -1) return null;
+          return (paginationInfo.page - 1) * paginationInfo.limit + index + 1;
+
+      case 'name':
+        return cellValue as string;
+
       case 'status':
         return (
           <Chip
@@ -188,49 +189,82 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
             {cellValue as string}
           </Chip>
         );
+
       case 'actions':
+        if (headerColumns.length <= 5) {
+          return (
+            <div className="relative flex justify-end items-center gap-1">
+              {onViewItem && (
+                  <Button isIconOnly size="sm" variant="light" onPress={() => onViewItem(item)}>
+                      <EyeIcon className="w-4 h-4 text-default-400" />
+                  </Button>
+              )}
+              {onEditItem && (
+                  <Button isIconOnly size="sm" variant="light" onPress={() => onEditItem(item)}>
+                      <PencilIcon className="w-4 h-4 text-default-400" />
+                  </Button>
+              )}
+              {onDeleteItem && (
+                  <Button isIconOnly size="sm" variant="light" onPress={() => onDeleteItem(item)}>
+                      <Trash2Icon className="w-4 h-4 text-default-400" />
+                  </Button>
+              )}
+            </div>
+          );
+        }
+
         return (
-          <div className="relative flex justify-end items-center gap-2">
+          <div className="relative flex justify-end items-center">
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly size="sm" variant="light">
-                  <MoreVerticalIcon className="text-default-300" />
+                  <MoreVerticalIcon className="w-4 h-4 text-default-400" />
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem key="view" onPress={() => onViewItem?.(item)}>View</DropdownItem>
-                <DropdownItem key="edit" onPress={() => onEditItem?.(item)}>Edit</DropdownItem>
-                <DropdownItem key="delete" onPress={() => onDeleteItem?.(item)}>Delete</DropdownItem>
+              <DropdownMenu aria-label="Actions">
+                {onViewItem && <DropdownItem key="view" onPress={() => onViewItem(item)}>View</DropdownItem>}
+                {onEditItem && <DropdownItem key="edit" onPress={() => onEditItem(item)}>Edit</DropdownItem>}
+                {onDeleteItem && <DropdownItem key="delete" onPress={() => onDeleteItem(item)}>Delete</DropdownItem>}
               </DropdownMenu>
             </Dropdown>
           </div>
         );
+
       default:
         return cellValue as React.ReactNode;
     }
-  }, [columns, statusColorMap]);
+  }, [
+    columns, 
+    statusColorMap, 
+    data, 
+    paginationInfo, 
+    headerColumns.length,
+    onViewItem, 
+    onEditItem, 
+    onDeleteItem
+  ]);
 
   const topContent = React.useMemo(() => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+      <div className="flex flex-col gap-4 bg-background">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-end">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className="w-full sm:max-w-[40%]"
             placeholder="Search..."
-            startContent={<SearchIcon />}
+            startContent={<SearchIcon className="w-4 h-4" />}
             value={filterValue}
             onClear={onClear}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             {filters && filterState && setFilterState && filters.map((filter) => {
               switch (filter.type) {
                 case 'dropdown':
                   return (
                     <Dropdown key={filter.key}>
-                      <DropdownTrigger className="hidden sm:flex">
-                        <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                      <DropdownTrigger>
+                        <Button endContent={<ChevronDownIcon className="w-4 h-4" />} variant="flat" >
                           {filter.label}
                         </Button>
                       </DropdownTrigger>
@@ -252,12 +286,12 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
                     </Dropdown>
                   );
                 case 'date':
-                  // Contoh untuk filter tanggal (bisa diganti dengan komponen DatePicker dari library UI Anda)
                   return (
-                    <div key={filter.key}>
-                       <label className="text-sm">{filter.label}</label>
+                    <div key={filter.key} className="flex flex-col">
+                       <label className="text-xs text-default-500">{filter.label}</label>
                        <Input
                           type="date"
+                          size="sm"
                           value={filterState[filter.key] || ''}
                           onChange={(e) => {
                              setFilterState((prev: Record<string, any>) => ({ ...prev, [filter.key]: e.target.value }));
@@ -271,14 +305,13 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
             })}
             {statusOptions.length > 0 && (
               <Dropdown>
-                <DropdownTrigger className="hidden sm:flex">
-                  <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                <DropdownTrigger>
+                  <Button endContent={<ChevronDownIcon className="w-4 h-4" />} variant="flat">
                     Status
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
                   disallowEmptySelection
-                  aria-label="Table Columns"
                   closeOnSelect={false}
                   selectedKeys={statusFilter}
                   selectionMode="multiple"
@@ -293,14 +326,13 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
               </Dropdown>
             )}
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+              <DropdownTrigger>
+                <Button endContent={<ChevronDownIcon className="w-4 h-4" />} variant="flat">
                   Columns
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Table Columns"
                 closeOnSelect={false}
                 selectedKeys={visibleColumns}
                 selectionMode="multiple"
@@ -314,22 +346,20 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
               </DropdownMenu>
             </Dropdown>
             {onAddNew && (
-            <Button color="primary" endContent={<PlusIcon />}  onPress={onAddNew}>
-              Add New
-            </Button>
+              <Button color="primary" endContent={<PlusIcon className="w-4 h-4" />} onPress={onAddNew}>
+                Add New
+              </Button>
             )}
           </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {paginationInfo.totalData} items
-          </span>
-          <label className="flex items-center text-default-400 text-small">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-default-400">
+          <span>Total {paginationInfo.totalData} items</span>
+          <label className="flex items-center gap-1">
             Rows per page:
             <select
-              className="bg-transparent outline-none text-default-400 text-small"
+              className="bg-transparent outline-none text-default-400 text-sm"
               onChange={onRowsPerPageChange}
-              defaultValue={paginationInfo.limit}
+              value={paginationInfo.limit}
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -352,12 +382,16 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
     onRowsPerPageChange,
     paginationInfo.totalData,
     paginationInfo.limit,
+    onAddNew,
+    filters,
+    filterState,
+    setFilterState,
   ]);
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+      <div className="py-2 px-4 flex flex-col sm:flex-row justify-between items-center gap-3 bg-background">
+        <span className="text-small text-default-400">
           {selectedKeys === 'all'
             ? 'All items selected'
             : `${selectedKeys.size} of ${data.length} selected`}
@@ -371,9 +405,9 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
           total={paginationInfo.totalPages}
           onChange={onPageChange}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className="flex gap-2 sm:hidden">
           <Button isDisabled={paginationInfo.page <= 1} size="sm" variant="flat" onPress={() => onPageChange(paginationInfo.page - 1)}>
-            Previous
+            Prev
           </Button>
           <Button isDisabled={paginationInfo.page >= paginationInfo.totalPages} size="sm" variant="flat" onPress={() => onPageChange(paginationInfo.page + 1)}>
             Next
@@ -384,44 +418,56 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
   }, [selectedKeys, data.length, paginationInfo, onPageChange]);
 
   return (
-    <Table
-      isHeaderSticky
-      aria-label="Example table with dynamic data"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid as string}
-            align={column.uid === 'actions' ? 'center' : 'start'}
-            allowsSorting={column.sortable}
+    <div className="w-full flex flex-col">
+      {/* Top Content (Filter, Search, dll) */}
+      {topContent}
+
+      {/* Scrollable Table Container */}
+      <div className="overflow-x-auto -mx-4 sm:mx-0 sm:px-0">
+        <div className="inline-block min-w-full align-middle overflow-x-auto w-[100px] p-2">
+          <Table
+            isHeaderSticky
+            aria-label="Responsive data table"
+            sortDescriptor={sortDescriptor}
+            onSelectionChange={setSelectedKeys}
+            onSortChange={setSortDescriptor}
+            className="min-w-full"
+            style={{ minWidth: '800px' }} // Pastikan tabel tidak terlalu sempit saat discroll
           >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        items={data}
-        isLoading={isLoading}
-        emptyContent={!isLoading && 'No data found'}
-      >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+            <TableHeader columns={headerColumns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid as string}
+                  align={column.uid === 'actions' ? 'center' : 'start'}
+                  allowsSorting={column.sortable}
+                  className="text-xs sm:text-sm"
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody
+              items={data}
+              isLoading={isLoading}
+              emptyContent={!isLoading && 'No data found'}
+            >
+              {(item) => (
+                <TableRow key={item.id}>
+                  {(columnKey) => (
+                    <TableCell className="text-xs sm:text-sm">
+                      {renderCell(item, columnKey)}
+                    </TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Bottom Content (Pagination) */}
+      {bottomContent}
+    </div>
   );
 };
 

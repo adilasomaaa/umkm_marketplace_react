@@ -1,8 +1,9 @@
-// src/lib/fetcher.ts
 import { addToast } from "@heroui/react";
 import { env } from "./env";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+type ContentType = "json" | "formData";
 
 type FetcherOptions = {
   method?: HttpMethod;
@@ -13,12 +14,12 @@ type FetcherOptions = {
   credentials?: RequestCredentials; // 'include' untuk Sanctum
   toast?: boolean; // default true; GET tidak akan di-toast
   baseUrl?: string;
+  contentType?: ContentType;
   // override BASE_URL bila perlu
 };
 
 const BASE_URL = env.apiUrl;
 
-// util kecil untuk janji 3 detik (sesuai kebutuhan addToast.promise)
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export async function http<T>(
@@ -32,6 +33,7 @@ export async function http<T>(
     credentials,
     toast = true,
     baseUrl,
+    contentType = "json",
   }: FetcherOptions = {}
 ): Promise<T> {
   const url = new URL(path, baseUrl ?? BASE_URL);
@@ -44,23 +46,28 @@ export async function http<T>(
 
   const token = auth ? localStorage.getItem("token") : null;
 
-  const isFormData = body instanceof FormData;
+  const shouldSendFormData =
+    contentType === "formData" || body instanceof FormData;
 
   let res: Response | null = null;
   try {
     res = await fetch(url.toString(), {
       method,
       headers: {
-        ...(!isFormData && { "Content-Type": "application/json" }),
+        ...(!shouldSendFormData && { "Content-Type": "application/json" }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
-      body: isFormData ? body : body ? JSON.stringify(body) : undefined,
-      credentials, // ex: 'include' untuk Sanctum
+      body: shouldSendFormData
+        ? (body as FormData)
+        : body
+        ? JSON.stringify(body)
+        : undefined,
+      credentials,
     });
 
-    const contentType = res.headers.get("content-type") || "";
-    const isJson = contentType.includes("application/json");
+    const contentTypeHeader = res.headers.get("content-type") || "";
+    const isJson = contentTypeHeader.includes("application/json");
     const data = (isJson ? await res.json() : undefined) as any;
 
     // error response

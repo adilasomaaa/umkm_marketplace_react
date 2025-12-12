@@ -15,10 +15,23 @@ interface BaseField {
 interface TextField extends BaseField {
   type: "text" | "email" | "password";
 }
+interface NumberField extends BaseField {
+  type: "number";
+}
+
+interface TextAreaField extends BaseField {
+  type: "textarea";
+}
 
 interface SelectField extends BaseField {
   type: "select";
   readonly options: readonly SelectOption[];
+}
+
+interface AutoCompleteField extends BaseField {
+  type: "autocomplete";
+  readonly options?: readonly SelectOption[];
+  readonly renderItem?: (item: SelectOption) => React.ReactElement<any>;
 }
 
 interface MultiSelectField extends BaseField {
@@ -27,11 +40,25 @@ interface MultiSelectField extends BaseField {
   readonly options: readonly SelectOption[];
 }
 
+interface UploadField extends BaseField {
+  type: "upload";
+  maxSize?: number;
+  allowedExtensions?: readonly string[];
+  previewUrl?: string;
+}
+
 // Gabungkan semua tipe field menjadi satu
-export type FormFieldConfig = TextField | SelectField | MultiSelectField;
+export type FormFieldConfig =
+  | TextField
+  | SelectField
+  | MultiSelectField
+  | UploadField
+  | TextAreaField
+  | NumberField
+  | AutoCompleteField;
 
 export type DisplayFieldConfig<T> = {
-  key: string; // Path ke data, mendukung notasi titik (e.g., 'profile.name')
-  label: string; // Label yang akan ditampilkan (e.g., 'Nama Lengkap')
-  render?: (item: T) => React.ReactNode; // Fungsi render kustom (opsional)
+  key: string;
+  label: string;
+  render?: (item: T) => React.ReactNode;
 };

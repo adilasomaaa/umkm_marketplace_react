@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import DashboardBreadcrumbs from "../../components/Dashboard/Breadcrumbs";
+import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
@@ -9,20 +9,20 @@ import {
 import DataTable, {
   type Column,
   type FilterConfig,
-} from "../../components/Dashboard/DataTable";
+} from "@/components/Dashboard/DataTable";
 import type {
   Permissions,
   PermissionsCreatePayload,
   PermissionsUpdatePayload
-} from "../../models";
-import { permissionsService } from "../../services/PermissionsService";
-import type { DisplayFieldConfig, FormFieldConfig } from "../../types";
-import InputModal from "../../components/Dashboard/InputModal";
-import ShowModal from "../../components/Dashboard/ShowModal";
-import DeleteModal from "../../components/Dashboard/DeleteModal";
+} from "@/models";
+import { permissionsService } from "@/services/PermissionsService";
+import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
+import InputModal from "@/components/Dashboard/InputModal";
+import ShowModal from "@/components/Dashboard/ShowModal";
+import DeleteModal from "@/components/Dashboard/DeleteModal";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { permissionsSchema, type PermissionsSchema } from "../../schemas/PermissionsSchema";
+import { permissionsSchema, type PermissionsSchema } from "@/schemas/PermissionsSchema";
 
 const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
   const allFields = {

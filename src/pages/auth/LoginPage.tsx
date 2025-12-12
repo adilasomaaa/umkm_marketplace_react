@@ -1,9 +1,9 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Checkbox, Input } from '@heroui/react'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginSchema } from '../../schemas/AuthSchema';
-import { authService } from '../../services/AuthService';
-import { useAuth } from '../../context/AuthContext';
+import { loginSchema, type LoginSchema } from '@/schemas/AuthSchema';
+import { authService } from '@/services/AuthService';
+import { useAuth } from '@/context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
@@ -22,7 +22,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (user && token) {
             if (user.roles?.name === "admin") navigate("/dashboard", { replace: true });
-            else navigate("/", { replace: true });
+            else navigate("/dashboard-client", { replace: true });
         }
     }, [user, token, navigate]);
 

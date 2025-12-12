@@ -1,40 +1,25 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Checkbox, Input } from '@heroui/react'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authService } from '../../services/AuthService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { Link, Links, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { registerSchema, type RegisterSchema } from '../../schemas/AuthSchema';
-import { useRegistration } from '../../context/RegistrationContext';
+import { pendaftarSchema, type PendaftarSchema } from '@/schemas/PendaftarSchema';
+import { pendaftarService } from '@/services/PendaftarService';
 
 
 const LoginPage = () => {
-    const [isVisible, setIsVisible] = useState(false);
-    const toggleVisibility = () => setIsVisible(!isVisible);
-    const { user, token } = useAuth();
     const navigate = useNavigate();
-    const { isLoading } = useAuth();
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterSchema>({
-        resolver: zodResolver(registerSchema),
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<PendaftarSchema>({
+        resolver: zodResolver(pendaftarSchema)
     });
-    const { setPendingEmail } = useRegistration();
 
-    useEffect(() => {
-        if (user && token) {
-            if (user.roles?.name === "admin") navigate("/dashboard", { replace: true });
-            else navigate("/", { replace: true });
-        }
-    }, [user, token, navigate]);
 
-    const onSubmit = async (values: RegisterSchema) => {
+    const onSubmit = async (values: PendaftarSchema) => {
         try {
-            const res = await authService.register(values);
-            if(res.status) {
-                setPendingEmail(values.email);             // simpan di state management
-                navigate("/verify", { replace: true });
-            }
+            await pendaftarService.create(values);
+            navigate("/login");
         } catch (e) {
             console.error(e);
             // tampilkan toast error
@@ -53,6 +38,37 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
             <CardBody className="flex flex-col gap-4">
                 <Input
+                    key="nib"
+                    label="Nomor Induk Berusaha (NIB)"
+                    type="text"
+                    variant="bordered"
+                    isInvalid={!!errors.nib}
+                    errorMessage={errors.nib?.message}
+                    {...register("nib")}
+                />
+
+                <Input
+                    key="nama_toko"
+                    label="Nama Toko"
+                    type="text"
+                    variant="bordered"
+                    isInvalid={!!errors.nama_toko}
+                    errorMessage={errors.nama_toko?.message}
+                    {...register("nama_toko")}
+                />
+
+                <Input
+                    key="nama_pemilik"
+                    label="Nama Pemilik"
+                    type="text"
+                    variant="bordered"
+                    isInvalid={!!errors.nama_pemilik}
+                    errorMessage={errors.nama_pemilik?.message}
+                    {...register("nama_pemilik")}
+                />
+
+                <Input
+                    key="email"
                     label="Email"
                     type="email"
                     variant="bordered"
@@ -60,47 +76,7 @@ const LoginPage = () => {
                     errorMessage={errors.email?.message}
                     {...register("email")}
                 />
-
-                <Input
-                    label="Username"
-                    type="text"
-                    variant="bordered"
-                    isInvalid={!!errors.username}
-                    errorMessage={errors.username?.message}
-                    {...register("username")}
-                />
-
-                <Input
-                    label="Nama"
-                    type="text"
-                    variant="bordered"
-                    isInvalid={!!errors.name}
-                    errorMessage={errors.name?.message}
-                    {...register("name")}
-                />
-
-                <Input
-                    label="Kata Sandi"
-                    endContent={
-                        <button
-                        aria-label="toggle password visibility"
-                        className="focus:outline-solid outline-transparent"
-                        type="button"
-                        onClick={toggleVisibility}
-                        >
-                        {isVisible ? (
-                            <EyeOff className="text-2xl mb-1 text-default-400 pointer-events-none" />
-                        ) : (
-                            <Eye className="text-2xl mb-1 text-default-400 pointer-events-none" />
-                        )}
-                        </button>
-                    }
-                    type={isVisible ? "text" : "password"}
-                    variant="bordered"
-                    isInvalid={!!errors.password}
-                    errorMessage={errors.password?.message}
-                    {...register("password")}
-                />
+                
 
             </CardBody>
 
@@ -111,9 +87,8 @@ const LoginPage = () => {
                     fullWidth
                     isLoading={isSubmitting}
                 >
-                Daftar
+                    Daftar
                 </Button>
-
                 <p className="text-center text-sm text-foreground-500">
                     Sudah punya akun?{" "}
                     <Link to="/login" className='text-primary'>

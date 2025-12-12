@@ -11,9 +11,9 @@ import {
   CardHeader,
   InputOtp,
 } from "@heroui/react";
-import { useRegistration } from "../../context/RegistrationContext";
-import { verifySchema, type VerifySchema } from "../../schemas/AuthSchema";
-import { authService } from "../../services/AuthService";
+import { useRegistration } from "@/context/RegistrationContext";
+import { verifySchema, type VerifySchema } from "@/schemas/AuthSchema";
+import { authService } from "@/services/AuthService";
 import { useEffect, useRef, useState } from "react";
 
 export default function VerifyPage() {

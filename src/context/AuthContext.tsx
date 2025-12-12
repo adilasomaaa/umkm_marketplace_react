@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import { createContext, useContext, useEffect, useState } from "react";
 import type { AuthUser } from "../models";
 import { authService } from "../services/AuthService";
@@ -41,14 +40,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = (token: string) => {
         localStorage.setItem("token", token);
         setToken(token);
-        // user akan di-fetch otomatis lewat effect
     };
 
     const logout = async () => {
         try {
             await authService.logout(); // panggil dulu endpoint (kalau ada)
         } finally {
-            // apapun hasilnya, bersihkan state lokal TERAKHIR
             localStorage.removeItem("access_token");
             setUser(null);
             setToken(null);

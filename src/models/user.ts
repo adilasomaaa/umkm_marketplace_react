@@ -1,9 +1,17 @@
+import type { Toko } from "./toko";
+
 export type User = {
   id: number;
   email: string;
   username: string;
   verifiedAt?: string;
-  userRole: string[];
+  toko: Toko | null;
+  userRole: {
+    name: string;
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
   createdAt?: string;
   updatedAt?: string;
 };

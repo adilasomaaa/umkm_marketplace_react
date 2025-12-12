@@ -20,7 +20,7 @@ const ShowModal = <T,> ({isOpen, onClose, title, data, fields} : ShowModalProps<
     
   return (
     <>
-        <Modal isOpen={isOpen} onOpenChange={onClose}>
+        <Modal isOpen={isOpen} onOpenChange={onClose} placement="center">
             <ModalContent>
             {(onClose) => (
                 <>

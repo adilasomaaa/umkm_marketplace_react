@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import DashboardBreadcrumbs from "../../components/Dashboard/Breadcrumbs";
+import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
@@ -9,21 +9,21 @@ import {
 import DataTable, {
   type Column,
   type FilterConfig,
-} from "../../components/Dashboard/DataTable";
+} from "@/components/Dashboard/DataTable";
 import type {
   User,
   UserUpdatePayload,
-} from "../../models";
-import { userService } from "../../services/UserService";
-import type { DisplayFieldConfig, FormFieldConfig } from "../../types";
-import InputModal from "../../components/Dashboard/InputModal";
-import ShowModal from "../../components/Dashboard/ShowModal";
-import DeleteModal from "../../components/Dashboard/DeleteModal";
+} from "@/models";
+import { userService } from "@/services/UserService";
+import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
+import InputModal from "@/components/Dashboard/InputModal";
+import ShowModal from "@/components/Dashboard/ShowModal";
+import DeleteModal from "@/components/Dashboard/DeleteModal";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Role } from "../../models/role";
-import { roleService } from "../../services/RoleService";
-import { userSchema, type UserSchema } from "../../schemas/UserSchema";
+import type { Role } from "@/models/role";
+import { roleService } from "@/services/RoleService";
+import { userSchema, type UserSchema } from "@/schemas/UserSchema";
 
 const getFormFields = (mode: "create" | "update", availableRoles: Role[]): FormFieldConfig[] => {
   const allFields = {
@@ -36,7 +36,7 @@ const getFormFields = (mode: "create" | "update", availableRoles: Role[]): FormF
       placeholder: "Pilih status...",
       options: availableRoles.map(role => ({
         label: role.name,
-        value: role.id, // Gunakan id sebagai value
+        value: role.id,
       })),
     },
   } as const;
@@ -52,14 +52,14 @@ const userColumns: Column<User>[] = [
   { name: "Email",uid: "email",sortable: true,defaultVisible: true  },
   { name: "Username", uid: "username", sortable: true, defaultVisible: true },
   { name: "Role", 
-    uid: "userRole", 
+    uid: "roles", 
     sortable: true, 
     defaultVisible: true, 
     renderCell: (item: User) => (
       <div className="flex flex-wrap gap-1">
         {item.userRole.map((role) => (
-          <Chip key={role} size="sm" variant="flat">
-            {role}
+          <Chip key={role.id} size="sm" variant="flat">
+            {role.name}
           </Chip>
         ))}
       </div>
@@ -145,7 +145,7 @@ const ManageUser = () => {
   const displayFields: DisplayFieldConfig<User>[] = [
     { key: "username", label: "Username" },
     { key: "email", label: "Email" },
-    { key: "role", label: "Role", render: (item) => item.userRole.join(", ") },
+    { key: "role", label: "Role", render: (item) => item.userRole.map((role) => role.name).join(", ") },
     {
       key: "createdAt",
       label: "Tanggal Bergabung",
@@ -216,7 +216,7 @@ const ManageUser = () => {
     if (editingItem && roles.length > 0) {
       const roleIds = editingItem.userRole
       .map(roleName => 
-        roles.find(role => role.name === roleName)?.id
+        roles.find(role => role.name === roleName.name)?.id
       )
       .filter(id => id !== undefined) as number[];
 
@@ -267,7 +267,7 @@ const ManageUser = () => {
   return (
     <div>
       <DashboardBreadcrumbs />
-      <h1 className="text-2xl font-semibold my-4">Manage User</h1>
+      <h1 className="text-2xl font-semibold my-4">Kelola Pengguna</h1>
       <DataTable
         data={items}
         isLoading={isLoading}

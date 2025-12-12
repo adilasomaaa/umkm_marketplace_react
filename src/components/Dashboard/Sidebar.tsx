@@ -2,9 +2,11 @@
 import { NavLink } from "react-router-dom";
 import { Button, Tooltip, Avatar, Divider, Accordion, AccordionItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import { NAV_ITEMS } from "./Nav";
+import { filterByRole, NAV_ITEMS } from "./Nav";
 import { useMemo } from "react";
 import Logo from '@/assets/logo.png';
+import { useAuth } from "../../context/AuthContext";
+import type { Role } from "../../models";
 
 export default function Sidebar({
     collapsed,
@@ -17,6 +19,14 @@ export default function Sidebar({
     onCloseMobile?: () => void;
     mobile?: boolean;          // <— tambah prop
 }) {
+    const rawRole = useAuth().user?.roles.name; 
+    
+    const currentUserRole = rawRole;
+
+    const filteredItems = useMemo(() => {
+        return filterByRole(NAV_ITEMS, currentUserRole);
+    }, [currentUserRole]);
+
     const rootClass = [
         "h-dvh border-r border-gray-200 bg-background flex flex-col transition-[width] duration-200",
         mobile
@@ -26,7 +36,7 @@ export default function Sidebar({
             : "hidden md:flex w-64",
     ].join(" ");
 
-    const items = useMemo(() => NAV_ITEMS, []);
+    // const items = useMemo(() => NAV_ITEMS, []);
 
 return (
     <aside className={rootClass}>
@@ -42,7 +52,7 @@ return (
 
         {/* Nav */}
         <nav className={collapsed ? "flex-1 space-y-1 px-1 py-3" : "flex-1 space-y-1 px-3 py-3"}>
-        {items.map((item) =>
+        {filteredItems.map((item) =>
           item.children && item.children.length > 0 ? (
             mobile || !collapsed ? (
               // Expanded (desktop) & mobile: pakai Accordion
@@ -60,7 +70,9 @@ return (
                   indicator={<ChevronDown className="h-4 w-4" />}
                 >
                   <div className="flex flex-col gap-1">
-                    {item.children.map((child) => (
+                    {item.children
+                      .filter(child => !child.roles || (!!currentUserRole && child.roles.includes(currentUserRole))) 
+                      .map((child) => (
                       <NavLink
                         key={child.key}
                         to={child.to ?? ""}
@@ -94,7 +106,9 @@ return (
                   </button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label={`${item.label} submenu`}>
-                  {item.children.map((child) => (
+                  {item.children
+                    .filter(child => !child.roles || (!!currentUserRole && child.roles.includes(currentUserRole)))
+                    .map((child) => (
                     <DropdownItem
                       key={child.key}
                       onPress={() => onCloseMobile?.()}
