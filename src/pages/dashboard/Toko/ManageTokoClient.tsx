@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import {
   Card,
   Image,
@@ -9,10 +9,11 @@ import {
   Chip,
   User
 } from "@heroui/react";
-import type {
-  Kategori,
-  TokoClient,
-  TokoUpdateClientPayload,
+import {
+  type Kategori,
+  type TokoClient,
+  type TokoUpdateClientPayload,
+  type Ulasan,
 } from "@/models";
 import { tokoService } from "@/services/TokoService";
 import { useAuth } from "@/context/AuthContext";
@@ -26,6 +27,11 @@ import { tokoUpdateClientSchema, type TokoUpdateClientSchema } from "@/schemas/T
 import { zodResolver } from "@hookform/resolvers/zod";
 import { env } from "@/lib/env";
 import Loading from "@/components/Dashboard/Loading";
+import { ulasanService } from "@/services/UlasanService";
+import UlasanCard from "@/components/Landing/UlasanCard";
+import { Link } from "react-router-dom";
+import { parseDate } from "@/lib/parse_date";
+import StatisticSection from "@/components/Dashboard/StatisticSection";
 
 const getFormFields = (mode: "create" | "update", categories: Kategori[], initialData: TokoClient): FormFieldConfig[] => {
   const allFields = {
@@ -67,6 +73,8 @@ const getFormFields = (mode: "create" | "update", categories: Kategori[], initia
 const ManageTokoClient = () => {
   const [tokoSaya, setTokoSaya] = useState<TokoClient | null>(null);
   const [kategori, setKategori] = useState<Kategori[]>([]);
+  const [ulasan, setUlasan] = useState<Ulasan[]>([]);
+  const [isLoadingUlasan, setIsLoadingUlasan] = useState(true);
   const [isLoadingKategori, setIsLoadingKategori] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TokoClient | null>(null);
@@ -124,8 +132,25 @@ const ManageTokoClient = () => {
           setIsLoadingKategori(false);
         }
       };
+
+      const fetchUlasan = async () => {
+        setIsLoadingUlasan(true)
+        try {
+          const response = await ulasanService.index({
+            limit: 3,
+            tokoId: user?.toko?.id
+          })
+          setUlasan(response.data)
+          setIsLoadingUlasan(false)
+        }catch(error){
+          console.error("Gagal mengambil data ulasan:", error)
+        }finally {
+          setIsLoadingUlasan(false)
+        }
+      }
   
       fetchKategori();
+      fetchUlasan();
     }, []);
 
   useEffect(() => {
@@ -195,7 +220,7 @@ const ManageTokoClient = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold my-4">Kelola Toko </h1>
+      <StatisticSection/>
       {tokoSaya ? (
         <div className="grid grid-cols-5 grid-rows-1 gap-4">
           <div className="col-span-3">
@@ -223,15 +248,16 @@ const ManageTokoClient = () => {
                     >
                       <PencilIcon className="h-4 w-4"></PencilIcon> Perbarui Toko
                     </Button>
-                    <Button
-                      color="primary"
-                      size="sm"
-                      variant="flat"
-                      className="ml-auto"
-                      onPress={() => handleOpenEditModal(tokoSaya)}
-                    >
-                      <ArrowRightCircle className="h-4 w-4"></ArrowRightCircle> Lihat Toko
-                    </Button>
+                    <Link to={`/${tokoSaya.slug}`} target="_blank" rel="noopener noreferrer">
+                      <Button
+                        color="primary"
+                        size="sm"
+                        variant="flat"
+                        className="ml-auto"
+                      >
+                        <ArrowRightCircle className="h-4 w-4"></ArrowRightCircle> Lihat Toko
+                      </Button>
+                    </Link>
                   </div>
                 </div>
                 <div className="flex ml-auto items-center gap-1 text-yellow-500 font-semibold">
@@ -241,28 +267,56 @@ const ManageTokoClient = () => {
               </CardHeader>
               <Divider />
               <CardBody>
-                <h3 className="text-lg font-semibold mb-2">Deskripsi Toko</h3>
-                <p className="text-default-700 mb-4">
-                  {tokoSaya.deskripsi && tokoSaya.deskripsi || "Deskripsi Toko belum diatur"}
-                </p>
-
-                <h3 className="text-lg font-semibold mb-2">Kategori Toko</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {tokoSaya.KategoriToko && tokoSaya.KategoriToko.length > 0 ? (
-                    tokoSaya.KategoriToko.map((kt) => (
-                      <Chip key={kt.id} color="primary" variant="flat" size="sm">
-                        {kt.kategori.nama_kategori}
-                      </Chip>
-                    ))
-                  ) : (
-                    <p className="text-small text-default-500">Kategori belum diatur</p>
-                  )}
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Deskripsi Toko</h3>
+                  <p className="text-default-700 mb-4">
+                    {tokoSaya.deskripsi && tokoSaya.deskripsi || "Deskripsi Toko belum diatur"}
+                  </p>
                 </div>
+                <Divider/>
+                <div className="my-4 grid gap-4 grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Cabang Toko</h3>
+                    {tokoSaya.CabangToko && tokoSaya.CabangToko.length > 0 ? (
+                        tokoSaya.CabangToko.map((kt) => (
+                          <Chip key={kt.id} color="primary" variant="flat" size="sm">
+                            {kt.nama_cabang}
+                          </Chip>
+                        ))
+                      ) : (
+                        <p className="text-small text-default-500">Kategori belum diatur</p>
+                      )}
+                  </div>
 
-                <h3 className="text-lg font-semibold mb-2">Kontak Toko</h3>
-                <p className="text-default-700 mb-4">
-                  {tokoSaya.nomor_hp && tokoSaya.nomor_hp || "Kontak Toko belum diatur"}
-                </p>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Kategori Toko</h3>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {tokoSaya.KategoriToko && tokoSaya.KategoriToko.length > 0 ? (
+                        tokoSaya.KategoriToko.map((kt) => (
+                          <Chip key={kt.id} color="primary" variant="flat" size="sm">
+                            {kt.kategori.nama_kategori}
+                          </Chip>
+                        ))
+                      ) : (
+                        <p className="text-small text-default-500">Kategori belum diatur</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Kontak Toko</h3>
+                    <p className="text-default-700 mb-4">
+                      {tokoSaya.nomor_hp && tokoSaya.nomor_hp || "Kontak Toko belum diatur"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Mulai Bergabung</h3>
+                    <p className="text-default-700 mb-4">
+                      {tokoSaya.createdAt && parseDate(tokoSaya.createdAt) || "Kontak Toko belum diatur"}
+                    </p>
+                  </div>
+                </div>
               </CardBody>
             </Card>
           </div>
@@ -274,18 +328,14 @@ const ManageTokoClient = () => {
               <Divider/>
               <CardBody>
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2 bg-default-100 p-2 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <User
-                        avatarProps={{
-                          src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-                        }}
-                        description="Product Designer"
-                        name="Jane Doe"
-                      />
-                    </div>
-                    <p className="text-default-600 text-sm">"Ulasan"</p>
-                  </div>
+                  {ulasan && ulasan.length > 0 ? (
+                    ulasan.map((ulasan) => (
+                      <UlasanCard key={ulasan.id} ulasan={ulasan}></UlasanCard>
+                      
+                    ))
+                  ) : (
+                    <p className="text-small text-default-500">Belum ada ulasan</p>
+                  )}
                 </div>
               </CardBody>
             </Card>

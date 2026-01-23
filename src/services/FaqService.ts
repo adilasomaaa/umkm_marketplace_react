@@ -15,6 +15,14 @@ export const faqService = {
     });
   },
 
+  async landing(params?: any) {
+    return await http<PaginatedFaqResponse>("faq/landing", {
+      method: "GET",
+      query: params,
+      auth: false,
+    });
+  },
+
   async create(payload: FaqCreatePayload) {
     return await http<{ data: Faq }>("faq", {
       method: "POST",

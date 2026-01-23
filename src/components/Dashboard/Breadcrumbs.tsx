@@ -6,6 +6,11 @@ const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+const toHumanReadableRoute = (route: string) => {
+  const segments = route.split('-');
+  return segments.map(capitalizeFirstLetter).join(' ');
+};
+
 const DashboardBreadcrumbs = () => {
   const location = useLocation();
   
@@ -29,7 +34,7 @@ const DashboardBreadcrumbs = () => {
         return (
           <BreadcrumbItem key={currentPath}>
             {isLast ? (
-              <span>{capitalizedSegment}</span>
+              <span>{toHumanReadableRoute(capitalizedSegment)}</span>
             ) : (
               <Link to={currentPath}>{capitalizedSegment}</Link>
             )}

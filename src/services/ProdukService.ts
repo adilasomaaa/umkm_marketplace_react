@@ -15,6 +15,14 @@ export const produkService = {
     });
   },
 
+  async landing(params?: any) {
+    return await http<PaginatedProdukResponse>("produk/landing", {
+      method: "GET",
+      query: params,
+      auth: false,
+    });
+  },
+
   async create(payload: ProdukCreatePayload) {
     const formData = new FormData();
 
@@ -54,6 +62,13 @@ export const produkService = {
     return await http<{ data: Produk }>(`produk/${id}`, {
       method: "GET",
       auth: true,
+    });
+  },
+
+  async landingProduk(slug: string) {
+    return await http<{ data: Produk }>(`produk/landing/${slug}`, {
+      method: "GET",
+      auth: false,
     });
   },
 

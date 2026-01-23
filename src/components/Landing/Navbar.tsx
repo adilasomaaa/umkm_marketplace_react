@@ -1,15 +1,21 @@
-import { Button, Input, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, User } from '@heroui/react'
 import React from 'react'
 import Logo from '@/assets/logo2.png'
-import { SearchIcon } from 'lucide-react'
-
+import { Home, LogOut, Mail, SearchIcon } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
+import Avatar from '@/assets/avatar.jpg';
 
 const NavbarComponent = () => {
+  const {user, logout} = useAuth()
+  
   return (
     <Navbar maxWidth="xl">
       <NavbarBrand>
-        <img src={Logo} alt="Mojies" width={40} />
-        <p className="font-bold text-inherit ml-2 text-success-600">InBiz</p>
+        <Link className='flex items-center' to="/">
+          <img src={Logo} alt="Mojies" width={40} />
+          <p className="font-bold text-inherit ml-2 text-success-600">InBiz</p>
+        </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <Input
@@ -27,14 +33,51 @@ const NavbarComponent = () => {
         />
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {user ? (
+          <Dropdown>
+            <DropdownTrigger>
+                <User
+                    as="button"
+                    avatarProps={{
+                    src: Avatar,
+                    }}
+                    className="transition-transform"
+                    description={user?.email}
+                    name={user?.username ?? user?.email}
+                />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="User menu">
+                <DropdownItem
+                    startContent={<Home />}
+                    isReadOnly 
+                    key="home" 
+                    href={user.roles.name == "admin" ? "/dashboard" : "/dashboard/manage-my-shop"}
+                    className="text-xs flex items-center gap-2">
+                    Dashboard
+                </DropdownItem>
+                <DropdownItem 
+                    startContent={<LogOut />}
+                    key="logout" 
+                    color="primary" 
+                    onPress={() => logout()} 
+                    className="flex items-center gap-2">
+                    Logout
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+        ) : (
+          <>
+            <NavbarItem className="hidden lg:flex">
+              <Link to="/login" className='text-gray-600'>Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color="primary" to="/register" variant="flat">
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
+        
       </NavbarContent>
     </Navbar>
   )

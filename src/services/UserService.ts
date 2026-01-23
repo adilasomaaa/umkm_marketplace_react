@@ -6,12 +6,9 @@ import type {
   UserCreatePayload,
 } from "../models/user";
 
-// Asumsi nama file model mengikuti format [nama].model.ts
-
 export const userService = {
   async index(params?: any) {
     return await http<PaginatedUserResponse>("users", {
-      // users untuk endpoint jamak
       method: "GET",
       query: params,
       auth: true,

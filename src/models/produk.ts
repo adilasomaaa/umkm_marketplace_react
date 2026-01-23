@@ -5,6 +5,7 @@ import type { Toko } from "./toko";
 export type Produk = {
   id: number;
   nama_produk: string;
+  totalUlasan: number;
   deskripsi: string;
   slug: string;
   harga: number;
@@ -55,4 +56,8 @@ export interface PaginatedProdukResponse {
     totalData: number;
     totalPages: number;
   };
+}
+
+export interface ProdukResponse {
+  data: Produk;
 }

@@ -32,8 +32,9 @@ import { produkSchema, type ProdukSchema } from "@/schemas/ProdukSchema";
 import { useAuth } from "@/context/AuthContext";
 import { currency_format } from "@/lib/number_format";
 import { useFilter } from "@react-aria/i18n";
+import { Link } from "react-router-dom";
 
-const renderDefaultCategoryItem = (item: { label: string; value: number }) => {
+const renderDefaultCategoryItem = (item: { label: string; value: string | number }) => {
     return (
         <AutocompleteItem key={String(item.value)} textValue={item.label}>
             {item.label}
@@ -112,10 +113,15 @@ const produkColumns: Column<Produk>[] = [
     sortable: true,
     defaultVisible: true,
     renderCell: (item: Produk) => (
-      <div className="flex items-center gap-4">
-        <Avatar src={env.baseUrl + item.thumbnail} />
-        <span>{item.nama_produk}</span>
-      </div>
+      <Link to={`/dashboard/manage-product/${item.id}`} className="cursor-pointer">
+        <div className="flex items-center gap-4">
+            <Avatar src={env.baseUrl + item.thumbnail} />
+            <div className="flex flex-col">
+              <span>{item.nama_produk}</span>
+              <span className="text-gray-500">{item.totalUlasan} ulasan</span>
+            </div>
+        </div>
+      </Link>
     ),
   },
   { name: "Harga", uid: "harga", sortable: true, defaultVisible: true, renderCell: (item: Produk) => <span>{currency_format(item.harga)}</span> },
@@ -139,6 +145,18 @@ const produkColumns: Column<Produk>[] = [
           <Chip size="sm" variant="dot" key={`${index}-${cabang.id}`} color={index === 0 ? "primary" : "default"}>{cabang.cabang.nama_cabang}</Chip>
         ))}
       </div>
+    )
+  },
+  { name: "Dibuat pada", 
+    uid: "createdAt", 
+    sortable: true, 
+    defaultVisible: false, 
+    renderCell: (item: Produk) => (
+      <span>{ item.createdAt && new Date(item.createdAt).toLocaleDateString("id-ID", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}</span>
     )
   },
   { name: "ACTIONS", uid: "actions", defaultVisible: true },
@@ -266,7 +284,6 @@ const ManageProduk = () => {
 
   const handleCategorySelectionChange = useCallback((key: string | number) => {
       setValue('kategoriId', key, { shouldValidate: true });
-      // Setelah memilih, set input value menjadi label terpilih untuk tampilan
       const selectedItem = fullCategoryOptions.find(item => String(item.value) === String(key));
       if (selectedItem) {
         setCategoryInputValue(selectedItem.label);
@@ -276,7 +293,6 @@ const ManageProduk = () => {
   useEffect(() => {
     if (editingItem) {
       reset({...editingItem, thumbnail: ""});
-      // Inisialisasi categoryInputValue saat mode edit
       const selectedCategory = fullCategoryOptions.find(opt => opt.value === editingItem.kategoriId);
       if (selectedCategory) {
           setCategoryInputValue(selectedCategory.label);
@@ -295,9 +311,11 @@ const ManageProduk = () => {
   }, [editingItem, reset, fullCategoryOptions]);
 
   const displayFields: DisplayFieldConfig<Produk>[] = [
-    { key: "name", label: "Nama Lengkap" },
-    { key: "username", label: "Username" },
-    { key: "user.email", label: "Email" },
+    { key: "nama_produk", label: "Nama Produk" },
+    { key: "harga", label: "Harga", render(item) {
+      return `${currency_format(item.harga)}`
+    }, },
+    { key: "kategori.nama_kategori", label: "Nama Kategori" },
     
     {
       key: "createdAt",

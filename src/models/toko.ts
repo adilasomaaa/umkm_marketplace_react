@@ -8,6 +8,7 @@ export type Toko = {
   slug: string;
   deskripsi?: string;
   nomor_hp?: string;
+  logo?: string;
   status: "aktif" | "nonaktif" | "ditangguhkan";
   PemilikToko: {
     id: number;
@@ -19,6 +20,21 @@ export type Toko = {
       email: string;
       username: string;
     };
+  }[];
+  KategoriToko?: {
+    id: number;
+    tokoId: number;
+    kategoriId: number;
+    kategori: Kategori;
+  }[];
+  CabangToko: {
+    id: number;
+    alamat: string;
+    latitude: string;
+    longitude: string;
+    nama_cabang: string;
+    tipe: string;
+    status: string;
   }[];
   createdAt?: string;
 };

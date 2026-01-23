@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const pemilikTokoCreateSchema = z.object({
-  nama_pemilik: z.string(),
+  nama: z.string(),
   tokoId: z.string().min(1),
   email: z.string().email(),
 });
@@ -16,3 +16,20 @@ export const pemilikTokoUpdateSchema = z.object({
 });
 
 export type PemilikTokoUpdateSchema = z.infer<typeof pemilikTokoUpdateSchema>;
+
+export const personilCreateSchema = z.object({
+  nama: z.string(),
+  jabatan: z.string(),
+  email: z.string().email(),
+});
+
+export type PersonilCreateSchema = z.infer<typeof personilCreateSchema>;
+
+export const personilUpdateSchema = z.object({
+  nama: z.string(),
+  jabatan: z.string(),
+  email: z.string().email(),
+  status: z.enum(["aktif", "nonaktif"]),
+});
+
+export type PersonilUpdateSchema = z.infer<typeof personilUpdateSchema>;

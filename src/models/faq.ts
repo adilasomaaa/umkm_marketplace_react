@@ -23,7 +23,7 @@ export type FaqCreatePayload = {
 
 export interface PaginatedFaqResponse {
   data: Faq[];
-  meta: {
+  meta?: {
     page: number;
     limit: number;
     totalData: number;

@@ -6,9 +6,11 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import Avatar from '@/assets/avatar.jpg';
 
+interface HeaderProps {
+    setOpenMobile: React.Dispatch<React.SetStateAction<boolean>>; 
+}
 
-const Header = () => {
-    const [openMobile, setOpenMobile] = useState(false);
+const Header: React.FC<HeaderProps> = ({ setOpenMobile }) => {
     const { user, logout } = useAuth();
     
   return (

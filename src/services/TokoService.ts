@@ -17,6 +17,14 @@ export const tokoService = {
     });
   },
 
+  async landing(params?: any) {
+    return await http<PaginatedTokoResponse>("toko/landing", {
+      method: "GET",
+      query: params,
+      auth: false,
+    });
+  },
+
   async create(payload: TokoCreatePayload) {
     return await http<{ data: Toko }>("toko", {
       method: "POST",
@@ -29,6 +37,13 @@ export const tokoService = {
     return await http<{ data: Toko }>(`toko/${id}`, {
       method: "GET",
       auth: true,
+    });
+  },
+
+  async landingToko(slug: string) {
+    return await http<{ data: Toko }>(`toko/landing/${slug}`, {
+      method: "GET",
+      auth: false,
     });
   },
 

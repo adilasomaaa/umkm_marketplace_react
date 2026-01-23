@@ -22,7 +22,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (user && token) {
             if (user.roles?.name === "admin") navigate("/dashboard", { replace: true });
-            else navigate("/dashboard-client", { replace: true });
+            else navigate("/dashboard/manage-my-shop", { replace: true });
         }
     }, [user, token, navigate]);
 
@@ -38,7 +38,7 @@ const LoginPage = () => {
         }
     };
   return (
-    <div className="min-h-dvh grid place-items-center bg-background">
+    <div className="">
         <Card className="w-full md:w-[400px] sm:w-full p-4 shadow-none">
             <CardHeader className="flex flex-col gap-1">
             <h1 className="text-2xl font-semibold">Masuk</h1>

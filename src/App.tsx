@@ -8,7 +8,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import DashboardLayout from './layouts/DashboardLayout';
 import VerifyPage from './pages/auth/VerifyPage';
-import ProfilPage from './pages/landing/ProfilPage';
 import ManageUser from './pages/dashboard/ManageUser';
 import ManageRole from './pages/dashboard/ManageRole';
 import ManagePermissions from './pages/dashboard/ManagePermissions';
@@ -21,16 +20,23 @@ import ManageCabang from './pages/dashboard/ManageCabang';
 import ManageFaq from './pages/dashboard/ManageFaq';
 import ManageSosialMedia from './pages/dashboard/ManageSosialMedia';
 import ManageProduk from './pages/dashboard/Produk/ManageProduk';
+import TokoPage from './pages/landing/TokoPage';
+import ProdukPage from './pages/landing/ProdukPage';
+import DetailProduk from './pages/dashboard/Produk/DetailProduk';
+import KategoriPage from './pages/landing/KategoriPage';
+import ManagePersonil from './pages/dashboard/ManagePersonil';
+import AuthLayout from './layouts/AuthLayout';
 
 function App() {
   return (
     <Routes>
 
 
-        {/* auth */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify" element={<VerifyPage />} />
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify" element={<VerifyPage />} />
+        </Route>
 
         {/* admin-only */}
         <Route
@@ -64,16 +70,17 @@ function App() {
           <Route path="/dashboard/manage-faq" element={<ManageFaq />} />
           <Route path="/dashboard/manage-sosial-media" element={<ManageSosialMedia />} />
           <Route path="/dashboard/manage-product" element={<ManageProduk />} />
-          <Route path="/dashboard/manage-owners" element={<ManagePemilikToko />} />
-          <Route path="/dashboard/manage-roles" element={<ManageRole />} />
-          <Route path="/dashboard/manage-permissions" element={<ManagePermissions />} />
+          <Route path="/dashboard/manage-product/:id" element={<DetailProduk />} />
+          <Route path="/dashboard/manage-personels" element={<ManagePersonil />} />
         </Route>
 
         <Route element={
           <LandingLayout />}
         >
           <Route path="/" element={<LandingPage />} />
-          <Route path="/profile" element={<ProfilPage />} />
+          <Route path="/category/:kategoriId" element={<KategoriPage />} />
+          <Route path="/:tokoSlug/:produkSlug" element={<ProdukPage />} />
+          <Route path="/:slug" element={<TokoPage />} />
         </Route>
       
       <Route path="*" element={<NotFound />} /> 

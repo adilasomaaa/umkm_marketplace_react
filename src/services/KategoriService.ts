@@ -4,6 +4,8 @@ import type {
   KategoriCreatePayload,
   KategoriUpdatePayload,
   Kategori,
+  KategoriResponse,
+  KategoriShow,
 } from "../models/kategori";
 
 export const kategoriService = {
@@ -12,6 +14,20 @@ export const kategoriService = {
       method: "GET",
       query: params,
       auth: true,
+    });
+  },
+
+  async landing(params?: any) {
+    return await http<KategoriResponse>("kategori/landing", {
+      method: "GET",
+      query: params,
+      auth: false,
+    });
+  },
+  async landingShow(id: number) {
+    return await http<KategoriShow>(`kategori/landing/${id}`, {
+      method: "GET",
+      auth: false,
     });
   },
 

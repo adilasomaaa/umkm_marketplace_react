@@ -18,7 +18,6 @@ import type {
 import { faqService } from "@/services/FaqService";
 import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
 import InputModal from "@/components/Dashboard/InputModal";
-import { env } from "@/lib/env";
 import ShowModal from "@/components/Dashboard/ShowModal";
 import DeleteModal from "@/components/Dashboard/DeleteModal";
 import { useForm } from "react-hook-form";
@@ -182,7 +181,7 @@ const ManageFaq = () => {
         search: filterValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta!);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

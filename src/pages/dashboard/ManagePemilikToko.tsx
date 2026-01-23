@@ -50,7 +50,7 @@ const getFormFields = (mode: "create" | "update", listToko : Toko[]): FormFieldC
     ];
   }else {
     const allFields = {
-      nama: { key: "nama", label: "Nama Pemilik", type: "text", placeholder: "Masukkan nama pemilik..." },
+      nama_pemilik: { key: "nama_pemilik", label: "Nama Pemilik", type: "text", placeholder: "Masukkan nama pemilik..." },
       email: { key: "email", label: "Email", type: "text", placeholder: "Masukkan Email..." },
       jabatan: { key: "jabatan", label: "Jabatan", type: "text", placeholder: "Masukkan Jabatan..." },
       status: {
@@ -66,7 +66,7 @@ const getFormFields = (mode: "create" | "update", listToko : Toko[]): FormFieldC
     } as const;
 
     return [
-      allFields.nama,
+      allFields.nama_pemilik,
       allFields.email,
       allFields.jabatan,
       allFields.status,
@@ -171,7 +171,7 @@ const ManagePemilikToko = () => {
   useEffect(() => {
     if (editingItem) {
       reset({
-        nama: editingItem.nama,
+        nama_pemilik: editingItem.nama_pemilik,
         email: editingItem.user.email,
         jabatan: editingItem.jabatan,
         photo: editingItem.user.photo,
@@ -180,7 +180,7 @@ const ManagePemilikToko = () => {
     } else {
       reset({
         nama_pemilik: "",
-        toko_id: 0,
+        tokoId: 0,
         email: "",
       });
     }
@@ -366,7 +366,7 @@ const ManagePemilikToko = () => {
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         title="Hapus Pemilik Toko"
-        message={`Apakah Anda yakin ingin menghapus "${deletingItem?.nama}"? Aksi ini tidak dapat dibatalkan.`}
+        message={`Apakah Anda yakin ingin menghapus "${deletingItem?.nama_pemilik}"? Aksi ini tidak dapat dibatalkan.`}
         isLoading={isSubmitting}
       />
     </div>

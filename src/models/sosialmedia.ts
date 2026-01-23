@@ -4,7 +4,7 @@ export type SosialMedia = {
   id: number;
   nama: string;
   url: string;
-  tipe: "facebook" | "instagram" | "twitter" | "linkedin" | "youtube";
+  tipe: "facebook" | "instagram" | "twitter" | "tiktok" | "youtube";
   tokoId: number;
   toko: Toko;
   createdAt?: string;
@@ -26,7 +26,7 @@ export type SosialMediaCreatePayload = {
 
 export interface PaginatedSosialMediaResponse {
   data: SosialMedia[];
-  meta: {
+  meta?: {
     page: number;
     limit: number;
     totalData: number;

@@ -1,12 +1,21 @@
+import Jumbotron from '@/components/Landing/Jumbotron'
+import KategoriSection from '@/components/Landing/KategoriSection'
+import ProdukSection from '@/components/Landing/ProdukSection'
+import TokoSection from '@/components/Landing/TokoSection'
 import React from 'react'
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = React.useState('teman')
   return (
     <>
-      <main className="col-span-12 lg:col-span-8 xl:col-span-6 xl:col-start-3">
-          
-      </main>
+      <Jumbotron/>
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl ">
+          <main className='grid col-span-12'>
+            <KategoriSection/>
+            <ProdukSection/>
+            <TokoSection/>
+          </main>
+      </div>
     </>
   )
 }

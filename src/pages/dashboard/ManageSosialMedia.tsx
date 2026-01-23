@@ -48,7 +48,7 @@ const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
         { label: "Facebook", value: "facebook" },
         { label: "Instagram", value: "instagram" },
         { label: "Twitter", value: "twitter" },
-        { label: "Linkedin", value: "linkedin" },
+        { label: "Tiktok", value: "tiktok" },
         { label: "Youtube", value: "youtube" },
       ],
     }

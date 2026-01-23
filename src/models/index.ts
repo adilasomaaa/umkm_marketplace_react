@@ -10,3 +10,5 @@ export * from "./cabang";
 export * from "./faq";
 export * from "./sosialmedia";
 export * from "./produk";
+export * from "./ulasan";
+export * from "./dashboard";

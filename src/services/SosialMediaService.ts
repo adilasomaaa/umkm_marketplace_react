@@ -15,6 +15,14 @@ export const sosialMediaService = {
     });
   },
 
+  async landing(params?: any) {
+    return await http<PaginatedSosialMediaResponse>("sosial-media/landing", {
+      method: "GET",
+      query: params,
+      auth: false,
+    });
+  },
+
   async create(payload: SosialMediaCreatePayload) {
     return await http<{ data: SosialMedia }>("sosial-media", {
       method: "POST",

@@ -19,10 +19,18 @@ export type KategoriCreatePayload = {
 
 export interface PaginatedKategoriResponse {
   data: Kategori[];
-  meta: {
+  meta?: {
     page: number;
     limit: number;
     totalData: number;
     totalPages: number;
   };
+}
+
+export interface KategoriResponse {
+  data: Kategori[];
+}
+
+export interface KategoriShow {
+  data: Kategori;
 }

@@ -26,7 +26,7 @@ const LoginPage = () => {
         }
     };
   return (
-    <div className="min-h-dvh grid place-items-center bg-background">
+    <div className="">
         <Card className="w-full md:w-[400px] sm:w-full p-4 shadow-none">
             <CardHeader className="flex flex-col gap-1">
                 <h1 className="text-2xl font-semibold">Buat Akun</h1>

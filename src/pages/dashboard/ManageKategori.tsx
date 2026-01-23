@@ -27,7 +27,7 @@ import { kategoriSchema, type KategoriSchema } from "@/schemas/KategoriSchema";
 import * as LucideIcons from "lucide-react";
 import { useFilter } from "@react-aria/i18n";
 
-const renderIconItem = (item: { label: string; value: string }) => {
+const renderIconItem = (item: { label: string; value: string | number }) => {
     const IconName = item.value as keyof typeof LucideIcons;
     const IconComponent = LucideIcons[IconName];
     const Icon = IconComponent;
@@ -306,11 +306,11 @@ const ManageKategori = () => {
       const response = await kategoriService.index({
         page: paginationInfo.page,
         limit: paginationInfo.limit,
-        search: filterValue || undefined,
-        tipe: tipeValue || undefined,
+        search: filterValue,
+        tipe: tipeValue,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta!);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

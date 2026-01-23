@@ -1,10 +1,6 @@
-// src/layout/AdminLayout.tsx
 import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import { Button, Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
-import { LogOut, Mail, Menu } from "lucide-react";
 import { useLocalStorage } from "../context/LocalStorageContext";
-import { useAuth } from "../context/AuthContext";
 import Sidebar from "../components/Dashboard/Sidebar";
 import Header from "@/components/Dashboard/Header";
 
@@ -20,7 +16,7 @@ export default function AdminLayout() {
         />
 
         <div className="flex-1 flex flex-col">
-            <Header/>
+            <Header setOpenMobile={setOpenMobile} />
             <main className="p-4">
                 <Outlet />
             </main>

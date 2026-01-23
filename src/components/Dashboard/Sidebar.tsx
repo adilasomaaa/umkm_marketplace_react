@@ -1,23 +1,21 @@
-// src/layout/AdminSidebar.tsx
-import { NavLink } from "react-router-dom";
-import { Button, Tooltip, Avatar, Divider, Accordion, AccordionItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
+import { Link, NavLink } from "react-router-dom";
+import { Button, Tooltip, Avatar, Divider, Accordion, AccordionItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Image } from "@heroui/react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { filterByRole, NAV_ITEMS } from "./Nav";
 import { useMemo } from "react";
 import Logo from '@/assets/logo.png';
 import { useAuth } from "../../context/AuthContext";
-import type { Role } from "../../models";
 
 export default function Sidebar({
     collapsed,
     onToggle,
     onCloseMobile,
-    mobile = false,            // <— tambah prop
+    mobile = false,
 }: {
     collapsed: boolean;
     onToggle: () => void;
     onCloseMobile?: () => void;
-    mobile?: boolean;          // <— tambah prop
+    mobile?: boolean;
 }) {
     const rawRole = useAuth().user?.roles.name; 
     
@@ -30,32 +28,27 @@ export default function Sidebar({
     const rootClass = [
         "h-dvh border-r border-gray-200 bg-background flex flex-col transition-[width] duration-200",
         mobile
-        ? "w-64 md:hidden"     // <— di mobile: TAMPIL (bukan hidden)
+        ? "w-64 md:hidden"
         : collapsed
             ? "hidden md:flex w-16"
             : "hidden md:flex w-64",
     ].join(" ");
 
-    // const items = useMemo(() => NAV_ITEMS, []);
-
 return (
     <aside className={rootClass}>
-        {/* Brand / Toggle */}
         <div className="h-16 px-3 flex items-center justify-between">
-            {!collapsed && <img src={Logo} alt="Logo" className="h-10 ml-3" />}
-            {!mobile && ( // tombol collapse tak perlu di drawer mobile
+            {!collapsed && <Link to='/'><Image src={Logo} alt="Logo" className="h-10"></Image></Link>}
+            {!mobile && (
             <Button isIconOnly size="sm" variant="light" onPress={onToggle} aria-label="Toggle sidebar">
                 {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
             )}
         </div>
 
-        {/* Nav */}
         <nav className={collapsed ? "flex-1 space-y-1 px-1 py-3" : "flex-1 space-y-1 px-3 py-3"}>
         {filteredItems.map((item) =>
           item.children && item.children.length > 0 ? (
             mobile || !collapsed ? (
-              // Expanded (desktop) & mobile: pakai Accordion
               <Accordion key={item.key} variant="splitted" selectionMode="multiple" className="mb-1">
                 <AccordionItem
                   key={`${item.key}-acc`}
@@ -92,7 +85,6 @@ return (
                 </AccordionItem>
               </Accordion>
             ) : (
-              // Collapsed (desktop): pakai Dropdown (popover) saat klik parent
               <Dropdown key={item.key} placement="right-start" offset={8}>
                 <DropdownTrigger>
                   <button

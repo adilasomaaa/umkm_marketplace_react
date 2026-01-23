@@ -28,15 +28,17 @@ export type PemilikToko = {
 export type PemilikTokoUpdatePayload = {
   nama: string;
   jabatan: string;
-  photo: string;
+  photo?: string;
   status: string;
   email: string;
+  tokoId?: number;
 };
 
 export type PemilikTokoCreatePayload = {
-  nama_pemilik: string;
-  toko_id: number;
+  nama: string;
+  tokoId: number;
   email: string;
+  jabatan?: string;
 };
 
 export interface PaginatedPemilikTokoResponse {
