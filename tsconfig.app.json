@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -15,14 +17,14 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Base URL */
     "baseUrl": "./",
     /* Base URL dan Paths untuk alias */
     "paths": {
-      "@/*": ["src/*"] // Untuk alias @/ yang Anda sebutkan sebelumnya
+      "@/*": [
+        "src/*"
+      ] // Untuk alias @/ yang Anda sebutkan sebelumnya
     },
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -31,5 +33,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

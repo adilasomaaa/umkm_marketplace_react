@@ -1,5 +1,4 @@
-import React from 'react';
-import { Breadcrumbs, BreadcrumbItem } from "@heroui/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@heroui/breadcrumbs";
 import { Link, useLocation } from 'react-router-dom';
 
 const capitalizeFirstLetter = (str: string) => {

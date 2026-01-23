@@ -222,9 +222,20 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Actions">
-                {onViewItem && <DropdownItem key="view" onPress={() => onViewItem(item)}>View</DropdownItem>}
-                {onEditItem && <DropdownItem key="edit" onPress={() => onEditItem(item)}>Edit</DropdownItem>}
-                {onDeleteItem && <DropdownItem key="delete" onPress={() => onDeleteItem(item)}>Delete</DropdownItem>}
+                {[
+                  { key: "view", label: "View", func: onViewItem },
+                  { key: "edit", label: "Edit", func: onEditItem },
+                  { key: "delete", label: "Delete", func: onDeleteItem },
+                ]
+                  .filter((action) => action.func)
+                  .map((action) => (
+                    <DropdownItem
+                      key={action.key}
+                      onPress={() => action.func!(item)}
+                    >
+                      {action.label}
+                    </DropdownItem>
+                  ))}
               </DropdownMenu>
             </Dropdown>
           </div>
