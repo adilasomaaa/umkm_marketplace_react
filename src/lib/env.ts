@@ -9,6 +9,6 @@ function getEnv(key: string, fallback?: string): string {
 
 export const env = {
   apiUrl: getEnv("VITE_API_URL", "http://localhost:3000/api"),
-  baseUrl: getEnv("VITE_BASE_URL", "http://localhost:3000/"),
+  baseUrl: getEnv("VITE_API_BASE_URL", "http://localhost:3000/"),
   nodeEnv: getEnv("MODE", "development"),
 };
