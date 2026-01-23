@@ -2,7 +2,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@heroui/button'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, User } from '@heroui/react';
 import { LogOut, Mail, Menu } from 'lucide-react';
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
 import Avatar from '@/assets/avatar.jpg';
 

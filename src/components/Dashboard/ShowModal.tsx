@@ -1,5 +1,5 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react'
-import React, { useEffect, useState } from 'react'
+
 import type { DisplayFieldConfig } from '../../types';
 
 function getNestedValue<T>(obj: T, path: string): any {

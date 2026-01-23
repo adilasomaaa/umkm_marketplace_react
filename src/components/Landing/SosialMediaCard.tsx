@@ -1,7 +1,7 @@
 import type { SosialMedia } from '@/models'
 import { Button } from '@heroui/button'
 import { Facebook, Instagram, Music2, Twitter, Youtube } from 'lucide-react'
-import React from 'react'
+
 import { Link } from 'react-router-dom'
 
 interface SosialMediaCardProps {

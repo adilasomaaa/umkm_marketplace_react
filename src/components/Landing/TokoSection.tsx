@@ -1,6 +1,6 @@
 import type { Toko } from '@/models';
 import { tokoService } from '@/services/TokoService';
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import TokoCard from './TokoCard';
 import { Pagination } from '@heroui/react';
 
@@ -12,7 +12,7 @@ const TokoSection = () => {
         totalData: 0,
         totalPages: 1,
     });
-    const [isLoading, setIsLoading] = useState(true);
+    const [_, setIsLoading] = useState(true);
 
     const fetchToko = useCallback(async (page:number) => {
         setIsLoading(true);

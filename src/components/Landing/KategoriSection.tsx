@@ -1,15 +1,14 @@
 import type { Kategori } from '@/models';
 import { kategoriService } from '@/services/KategoriService';
 import { Card, CardBody, CardHeader } from '@heroui/react'
-import { set } from 'lodash';
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as LucideIcons from "lucide-react";
 import Loading from '../Dashboard/Loading';
 import { Link } from 'react-router-dom';
 
 const renderIconItem = (name:string, icon:string, id: number) => {
     const IconName = icon as keyof typeof LucideIcons;
-    const IconComponent = LucideIcons[IconName];
+    const IconComponent = LucideIcons[IconName] as React.ComponentType<any>;
     const Icon = IconComponent;
 
     return (

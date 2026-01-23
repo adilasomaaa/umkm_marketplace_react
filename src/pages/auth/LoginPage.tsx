@@ -14,7 +14,7 @@ const LoginPage = () => {
     const toggleVisibility = () => setIsVisible(!isVisible);
     const { user, token, login } = useAuth();
     const navigate = useNavigate();
-    const { isLoading } = useAuth();
+
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema),
     });

@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
   Chip,
 } from "@heroui/react";
 import DataTable, {
   type Column,
-  type FilterConfig,
+
 } from "@/components/Dashboard/DataTable";
 import type {
   User,
@@ -25,7 +24,7 @@ import type { Role } from "@/models/role";
 import { roleService } from "@/services/RoleService";
 import { userSchema, type UserSchema } from "@/schemas/UserSchema";
 
-const getFormFields = (mode: "create" | "update", availableRoles: Role[]): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update", availableRoles: Role[]): FormFieldConfig[] => {
   const allFields = {
     username: { key: "username", label: "Username", type: "text", placeholder: "Masukkan username..." },
     email: { key: "email", label: "Email", type: "email", placeholder: "contoh@email.com" },
@@ -85,7 +84,7 @@ const ManageUser = () => {
   const [viewingItem, setViewingItem] = useState<User | null>(null);
 
   const [roles, setRoles] = useState<Role[]>([]);
-  const [isLoadingRoles, setIsLoadingRoles] = useState(true);
+  const [_, setIsLoadingRoles] = useState(true);
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -195,7 +194,7 @@ const ManageUser = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

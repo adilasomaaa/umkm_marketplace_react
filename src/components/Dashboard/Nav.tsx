@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { LayoutDashboard, Users, Settings, Home, BarChart3, TagIcon, Split, FolderOpen, CircleQuestionMark, CircleFadingPlus, Store, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Home, TagIcon, Split, FolderOpen, CircleQuestionMark, CircleFadingPlus, Store, ClipboardList } from "lucide-react";
 
 export type Role = "admin" | "client" | string;
 

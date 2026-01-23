@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Select, SelectItem, Textarea, NumberInput, Autocomplete, AutocompleteItem } from '@heroui/react';
 import type { FormFieldConfig } from '../../types';
 import ImageUploadField from './ImageUploadField'
 import type { UploadFieldProps } from './ImageUploadField';
+
+type SelectOption = { label: string; value: string | number };
 
 interface InputModalProps {
   isOpen: boolean;
@@ -25,9 +27,7 @@ interface InputModalProps {
     }>;
 }
 
-const getValueByDotNotation = (obj: Record<string, any>, path: string) => {
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-};
+
 
 const isUploadField = (field: FormFieldConfig): field is UploadFieldProps => field.type === 'upload';
 
@@ -162,8 +162,8 @@ const InputModal = ({ isOpen,
                         placeholder={field.placeholder}
                         selectionMode="multiple"
                         selectedKeys={(watch(field.key) || []).map(String)}
-                        onSelectionChange={(keys: Set<string>) => {
-                          const numericValues = Array.from(keys).map(key => Number(key));
+                        onSelectionChange={(keys: any) => {
+                          const numericValues = Array.from(keys).map((key: any) => Number(key));
                           setValue(field.key, numericValues, { shouldValidate: true });
                         }}
                         isInvalid={!!errors[field.key]}

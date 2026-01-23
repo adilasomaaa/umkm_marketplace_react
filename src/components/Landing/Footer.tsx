@@ -1,5 +1,5 @@
 import { Image } from '@heroui/react'
-import React from 'react'
+
 import LogoInvert from '@/assets/logo.png'
 import LogoDinas from '@/assets/ktg.png'
 

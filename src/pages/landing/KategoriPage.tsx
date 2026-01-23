@@ -1,11 +1,11 @@
 import Loading from '@/components/Dashboard/Loading'
 import ProdukCard from '@/components/Landing/ProdukCard'
-import type { Kategori, KategoriShow, Produk } from '@/models'
+import type { KategoriShow, Produk } from '@/models'
 import { kategoriService } from '@/services/KategoriService'
 import { produkService } from '@/services/ProdukService'
 import { Divider, Pagination } from '@heroui/react'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import * as LucideIcons from "lucide-react";
 import NotFound from '@/components/Landing/NotFound'
 
@@ -33,7 +33,7 @@ const KategoriPage = () => {
         totalPages: 1,
     })
     const [isLoading, setIsLoading] = useState(true)
-    const [isLoadingProduk, setIsLoadingProduk] = useState(true)
+    const [_, setIsLoadingProduk] = useState(true)
 
     const fetchKategori = useCallback(async (id: number) => {
         setIsLoading(true);

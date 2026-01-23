@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Image from '@/assets/header.png'
 import LogoKtg from '@/assets/ktg.png'
 import { Link } from 'react-router-dom';

@@ -34,8 +34,9 @@ export const produkService = {
       }
 
       if (key === "thumbnail") {
-        if (value instanceof FileList) {
-          const file = value.length > 0 ? value[0] : null;
+        if ((value as any) instanceof FileList) {
+          const fileList = value as unknown as FileList;
+          const file = fileList.length > 0 ? fileList[0] : null;
 
           if (file) {
             formData.append(key, file);
@@ -83,8 +84,9 @@ export const produkService = {
       }
 
       if (key === "thumbnail") {
-        if (value instanceof FileList) {
-          const file = value.length > 0 ? value[0] : null;
+        if ((value as any) instanceof FileList) {
+          const fileList = value as unknown as FileList;
+          const file = fileList.length > 0 ? fileList[0] : null;
 
           if (file) {
             formData.append(key, file);

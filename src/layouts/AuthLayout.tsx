@@ -1,5 +1,5 @@
 import { Button, Image } from '@heroui/react'
-import React, { useEffect, useState } from 'react'
+
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import RegisterImage from '@/assets/register.jpg'
 import LoginImage from '@/assets/login.jpg'

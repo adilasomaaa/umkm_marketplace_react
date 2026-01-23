@@ -1,8 +1,7 @@
 import type { Produk, Ulasan, UlasanCreatePayload } from '@/models'
 import { ulasanService } from '@/services/UlasanService'
-import { Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Input, Pagination, Textarea, useDisclosure } from '@heroui/react'
-import React, { useCallback, useEffect, useState } from 'react'
-import Loading from '../Dashboard/Loading'
+import { Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Input, Pagination, Textarea } from '@heroui/react'
+import { useCallback, useEffect, useState } from 'react'
 import UlasanCard from './UlasanCard'
 import { Send } from 'lucide-react'
 import RatingInput from './RatingInput'
@@ -15,7 +14,7 @@ interface DrawerUlasanProps {
 
 const DrawerUlasan = ({ isOpen, onOpenChange, produk }: DrawerUlasanProps) => {
     const [ulasan, setUlasan] = useState<Ulasan[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [_, setIsLoading] = useState(true);
 
     const [userName, setUserName] = useState('');
     const [userComment, setUserComment] = useState('');
@@ -92,7 +91,7 @@ const DrawerUlasan = ({ isOpen, onOpenChange, produk }: DrawerUlasanProps) => {
     <div>
         <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
-          {(onClose) => (
+          {(_) => (
             <>
               <DrawerHeader className="flex flex-col gap-1">
                 <span className='font-normal'>Ulasan terkait</span> 

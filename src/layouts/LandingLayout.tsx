@@ -1,5 +1,5 @@
-import React from 'react'
-import LeftNav from '../components/Landing/LeftNav'
+
+
 import { Outlet } from 'react-router-dom'
 import NavbarComponent from '@/components/Landing/Navbar'
 import Footer from '@/components/Landing/Footer'

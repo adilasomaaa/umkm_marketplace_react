@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
   Chip,
 } from "@heroui/react";
 import DataTable, {
@@ -97,7 +96,7 @@ const ManagePemilikToko = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<PemilikToko[]>([]);
   const [toko, setToko] = useState<Toko[]>([]);
-  const [isLoadingToko, setIsLoadingToko] = useState(true);
+  const [_, setIsLoadingToko] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [paginationInfo, setPaginationInfo] = useState({
     page: 1,
@@ -171,7 +170,7 @@ const ManagePemilikToko = () => {
   useEffect(() => {
     if (editingItem) {
       reset({
-        nama_pemilik: editingItem.nama_pemilik,
+        nama: editingItem.nama,
         email: editingItem.user.email,
         jabatan: editingItem.jabatan,
         photo: editingItem.user.photo,
@@ -179,7 +178,7 @@ const ManagePemilikToko = () => {
       });
     } else {
       reset({
-        nama_pemilik: "",
+        nama: "",
         tokoId: 0,
         email: "",
       });
@@ -267,7 +266,7 @@ const ManagePemilikToko = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -366,7 +365,7 @@ const ManagePemilikToko = () => {
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         title="Hapus Pemilik Toko"
-        message={`Apakah Anda yakin ingin menghapus "${deletingItem?.nama_pemilik}"? Aksi ini tidak dapat dibatalkan.`}
+        message={`Apakah Anda yakin ingin menghapus "${deletingItem?.nama}"? Aksi ini tidak dapat dibatalkan.`}
         isLoading={isSubmitting}
       />
     </div>

@@ -2,7 +2,7 @@ import { env } from '@/lib/env';
 import { currency_format } from '@/lib/number_format';
 import type { Produk } from '@/models'
 import { Card, CardBody, CardFooter, Image } from '@heroui/react'
-import React from 'react'
+
 import { Link } from 'react-router-dom';
 
 interface ProdukCardProps {

@@ -1,4 +1,4 @@
-import React, { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Card,
   Image,
@@ -7,7 +7,6 @@ import {
   Divider,
   CardBody,
   Chip,
-  User
 } from "@heroui/react";
 import {
   type Kategori,
@@ -33,7 +32,7 @@ import { Link } from "react-router-dom";
 import { parseDate } from "@/lib/parse_date";
 import StatisticSection from "@/components/Dashboard/StatisticSection";
 
-const getFormFields = (mode: "create" | "update", categories: Kategori[], initialData: TokoClient): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update", categories: Kategori[], initialData: TokoClient): FormFieldConfig[] => {
   const allFields = {
     nama_toko: { key: "nama_toko", label: "Nama Toko", type: "text", placeholder: "Masukkan nama toko..." },
     nomor_hp: { key: "nomor_hp", label: "Kontak Toko", type: "text", placeholder: "Masukkan kontak toko..." },
@@ -74,8 +73,8 @@ const ManageTokoClient = () => {
   const [tokoSaya, setTokoSaya] = useState<TokoClient | null>(null);
   const [kategori, setKategori] = useState<Kategori[]>([]);
   const [ulasan, setUlasan] = useState<Ulasan[]>([]);
-  const [isLoadingUlasan, setIsLoadingUlasan] = useState(true);
-  const [isLoadingKategori, setIsLoadingKategori] = useState(true);
+  const [_, setIsLoadingUlasan] = useState(true);
+  const [__, setIsLoadingKategori] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TokoClient | null>(null);
   const { user } = useAuth();

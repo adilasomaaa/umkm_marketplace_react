@@ -1,5 +1,5 @@
 import DashboardBreadcrumbs from '@/components/Dashboard/Breadcrumbs';
-import ShareButtons from '@/components/Landing/ShareButton';
+
 import UlasanCard from '@/components/Landing/UlasanCard';
 import { env } from '@/lib/env';
 import { currency_format } from '@/lib/number_format';
@@ -7,8 +7,8 @@ import type { Produk, Ulasan } from '@/models';
 import { produkService } from '@/services/ProdukService';
 import { ulasanService } from '@/services/UlasanService';
 import { Button, Chip, Divider, Image, Pagination } from '@heroui/react';
-import { ArrowLeft, ChevronLeft, Eye } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react'
+import { ChevronLeft, Eye } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 const DetailProduk = () => {
@@ -16,7 +16,7 @@ const DetailProduk = () => {
 
     const [produk, setProduk] = useState<Produk | null>(null)
     const [ulasan, setUlasan] = useState<Ulasan[]>([])
-    const [isLoading, setIsLoading] = useState(true);
+    const [_, setIsLoading] = useState(true);
     const [paginationInfo, setPaginationInfo] = useState({
         page: 1,
         limit: 10,

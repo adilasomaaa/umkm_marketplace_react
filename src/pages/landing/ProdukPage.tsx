@@ -6,13 +6,13 @@ import ShareButtons from '@/components/Landing/ShareButton';
 import TokoCard from '@/components/Landing/TokoCard';
 import { env } from '@/lib/env';
 import { currency_format } from '@/lib/number_format';
-import type { Produk, ProdukResponse, Toko } from '@/models';
+import type { Produk, Toko } from '@/models';
 import { produkService } from '@/services/ProdukService';
 import { tokoService } from '@/services/TokoService';
-import { BreadcrumbItem, Breadcrumbs, Button, Chip, Divider, Image, useDisclosure } from '@heroui/react';
-import { Heart, MessageSquareText, ShoppingCart } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom';
+import { Button, Chip, Divider, Image, useDisclosure } from '@heroui/react';
+import { MessageSquareText, ShoppingCart } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 
 const ProdukPage = () => {
     const {tokoSlug, produkSlug} = useParams();

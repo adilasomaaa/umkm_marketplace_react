@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
   Chip,
   AutocompleteItem,
 } from "@heroui/react";
@@ -21,7 +20,7 @@ import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
 import InputModal from "@/components/Dashboard/InputModal";
 import ShowModal from "@/components/Dashboard/ShowModal";
 import DeleteModal from "@/components/Dashboard/DeleteModal";
-import { useForm, useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { kategoriSchema, type KategoriSchema } from "@/schemas/KategoriSchema";
 import * as LucideIcons from "lucide-react";
@@ -29,7 +28,7 @@ import { useFilter } from "@react-aria/i18n";
 
 const renderIconItem = (item: { label: string; value: string | number }) => {
     const IconName = item.value as keyof typeof LucideIcons;
-    const IconComponent = LucideIcons[IconName];
+    const IconComponent = LucideIcons[IconName] as React.ComponentType<any>;
     const Icon = IconComponent;
 
     return (
@@ -42,7 +41,7 @@ const renderIconItem = (item: { label: string; value: string | number }) => {
     );
 };
 
-const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update"): FormFieldConfig[] => {
   const allFields = {
     nama_kategori: {
       key: "nama_kategori",
@@ -84,7 +83,7 @@ const kategoriColumns: Column<Kategori>[] = [
     defaultVisible: true,
     renderCell: (item: Kategori) => {
         const IconName = item.icon as keyof typeof LucideIcons;
-        const IconComponent = IconName ? LucideIcons[IconName] : null;
+        const IconComponent = IconName ? LucideIcons[IconName] as React.ComponentType<any> : null;
         const Icon = IconComponent;
       
         return (
@@ -150,7 +149,7 @@ const ManageKategori = () => {
   }));
     
   const [iconInputValue, setIconInputValue] = useState("");
-  const [selectedIconLabel, setSelectedIconLabel] = useState(""); 
+  const [_, setSelectedIconLabel] = useState(""); 
   const [filteredIconItems, setFilteredIconItems] = useState(fullIconOptions);
     
   const { startsWith } = useFilter({ sensitivity: "base" });
@@ -208,7 +207,7 @@ const ManageKategori = () => {
       
       if (selectedItem) {
           setIconInputValue(selectedItem.label);
-          setSelectedIconLabel(selectedItem.label); // Ini mungkin tidak terpakai, tapi menjaga konsistensi state
+          setSelectedIconLabel(selectedItem.label);
 
           setValue('icon', selectedItem.value, { shouldValidate: true });
       }
@@ -310,7 +309,7 @@ const ManageKategori = () => {
         tipe: tipeValue,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta!);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

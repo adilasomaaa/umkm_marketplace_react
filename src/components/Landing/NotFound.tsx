@@ -1,6 +1,6 @@
 import { Button } from '@heroui/button'
 import { Home } from 'lucide-react'
-import React from 'react'
+
 import { Link } from 'react-router-dom'
 
 const NotFound = () => {

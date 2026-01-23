@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { Loader2 } from 'lucide-react';
 
-interface ApiService {
-    [key: string]: (payload: any) => Promise<any>; 
-}
-
 interface ConfirmationModalProps {
     isOpen: boolean;
     onClose: () => void;

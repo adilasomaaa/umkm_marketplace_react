@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
@@ -17,7 +17,7 @@ import type {
 import { sosialMediaService } from "@/services/SosialMediaService";
 import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
 import InputModal from "@/components/Dashboard/InputModal";
-import { env } from "@/lib/env";
+
 import ShowModal from "@/components/Dashboard/ShowModal";
 import DeleteModal from "@/components/Dashboard/DeleteModal";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { sosialMediaSchema, type SosialMediaSchema } from "@/schemas/SosialMediaSchema";
 import { useAuth } from "@/context/AuthContext";
 
-const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update"): FormFieldConfig[] => {
   const allFields = {
     nama: {
       key: "nama",
@@ -201,7 +201,7 @@ const ManageSosialMedia = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -268,6 +268,8 @@ const ManageSosialMedia = () => {
         setPaginationInfo={setPaginationInfo}
         filterValue={filterValue}
         setFilterValue={setFilterValue}
+        filterState={filterState}
+        setFilterState={setFilterState}
         filters={filterConfig}
         sortDescriptor={sortDescriptor}
         setSortDescriptor={setSortDescriptor}

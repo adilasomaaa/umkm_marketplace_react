@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
   Chip,
 } from "@heroui/react";
 import DataTable, {
@@ -243,7 +242,7 @@ const ManagePersonil = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

@@ -1,10 +1,8 @@
 import type { Produk } from '@/models'
 import { produkService } from '@/services/ProdukService';
-import React, { useCallback, useEffect, useState } from 'react'
-import Loading from '../Dashboard/Loading';
+import { useCallback, useEffect, useState } from 'react'
 import ProdukCard from './ProdukCard';
 import { Pagination } from '@heroui/react';
-import { Link } from 'react-router-dom';
 
 const ProdukSection = () => {
     const [produk, setProduk] = useState<Produk[]>([])
@@ -14,7 +12,7 @@ const ProdukSection = () => {
         totalData: 0,
         totalPages: 1,
     });
-    const [isLoading, setIsLoading] = useState(true);
+    const [_, setIsLoading] = useState(true);
 
     const fetchProduk = useCallback(async (page:number) => {
         setIsLoading(true);

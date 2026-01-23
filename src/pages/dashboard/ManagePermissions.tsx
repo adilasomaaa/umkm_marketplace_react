@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
-  Chip,
+
 } from "@heroui/react";
 import DataTable, {
   type Column,
@@ -24,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { permissionsSchema, type PermissionsSchema } from "@/schemas/PermissionsSchema";
 
-const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update"): FormFieldConfig[] => {
   const allFields = {
     name: { key: "name", label: "Nama Permissions", type: "text", placeholder: "Masukkan nama permissions..." },
   } as const;
@@ -174,7 +173,7 @@ const ManagePermissions = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

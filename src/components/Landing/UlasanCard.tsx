@@ -1,7 +1,7 @@
 import type { Ulasan } from '@/models'
 import { ulasanService } from '@/services/UlasanService'
-import { Avatar, Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Chip, useDisclosure } from '@heroui/react'
-import { Check, CheckLine, StarIcon, Trash, X } from 'lucide-react'
+import { Avatar, Button, ButtonGroup, Card, CardBody, CardHeader, Chip, useDisclosure } from '@heroui/react'
+import { Check, StarIcon, Trash, X } from 'lucide-react'
 import React, { useState } from 'react'
 import ConfirmationModal from '../Dashboard/ConfirmationModal'
 

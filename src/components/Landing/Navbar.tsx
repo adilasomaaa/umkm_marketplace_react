@@ -1,7 +1,7 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, User } from '@heroui/react'
-import React from 'react'
+
 import Logo from '@/assets/logo2.png'
-import { Home, LogOut, Mail, SearchIcon } from 'lucide-react'
+import { Home, LogOut, SearchIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import Avatar from '@/assets/avatar.jpg';

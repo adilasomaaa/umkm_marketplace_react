@@ -1,5 +1,5 @@
-import { Card, CardBody, CardHeader } from '@heroui/react'
-import React from 'react'
+import { Card, CardBody } from '@heroui/react'
+
 
 interface StatisticCardProps {
     title: string

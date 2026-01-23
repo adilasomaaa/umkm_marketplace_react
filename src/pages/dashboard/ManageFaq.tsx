@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
-  Chip,
+
 } from "@heroui/react";
 import DataTable, {
   type Column,
@@ -12,7 +11,7 @@ import DataTable, {
 } from "@/components/Dashboard/DataTable";
 import type {
   Faq,
-  FaqCreatePayload,
+
   FaqUpdatePayload
 } from "@/models";
 import { faqService } from "@/services/FaqService";
@@ -25,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { faqSchema, type FaqSchema } from "@/schemas/FaqSchema";
 import { useAuth } from "@/context/AuthContext";
 
-const getFormFields = (mode: "create" | "update"): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update"): FormFieldConfig[] => {
   const allFields = {
     pertanyaan: {
       key: "pertanyaan",
@@ -181,7 +180,7 @@ const ManageFaq = () => {
         search: filterValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta!);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -248,6 +247,9 @@ const ManageFaq = () => {
         setPaginationInfo={setPaginationInfo}
         filterValue={filterValue}
         setFilterValue={setFilterValue}
+
+        filterState={filterState}
+        setFilterState={setFilterState}
         filters={filterConfig}
         sortDescriptor={sortDescriptor}
         setSortDescriptor={setSortDescriptor}

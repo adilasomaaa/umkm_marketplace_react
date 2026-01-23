@@ -1,4 +1,4 @@
-import { url, z } from "zod";
+import { z } from "zod";
 
 export const sosialMediaSchema = z.object({
   nama: z.string(),

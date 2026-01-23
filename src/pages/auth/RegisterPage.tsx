@@ -1,10 +1,7 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Checkbox, Input } from '@heroui/react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Input } from '@heroui/react'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from '@/context/AuthContext';
-import { Link, Links, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { pendaftarSchema, type PendaftarSchema } from '@/schemas/PendaftarSchema';
 import { pendaftarService } from '@/services/PendaftarService';
 

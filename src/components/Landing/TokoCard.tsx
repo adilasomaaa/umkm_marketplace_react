@@ -1,8 +1,7 @@
 import { env } from '@/lib/env'
 import type { Toko } from '@/models'
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider, Image } from '@heroui/react'
+import { Button, Card, CardHeader, Chip, Image } from '@heroui/react'
 import { MessageCircleMore, StarIcon } from 'lucide-react'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 interface TokoCardProps {
@@ -12,7 +11,7 @@ interface TokoCardProps {
     isCabangDisplay?: boolean
 }
 
-const TokoCard = ({ item, index, isCtaButton }: TokoCardProps) => {
+const TokoCard = ({ item, isCtaButton }: TokoCardProps) => {
   return (
     <Card className='w-full'>
       <CardHeader className="flex items-center gap-4">

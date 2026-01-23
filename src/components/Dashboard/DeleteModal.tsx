@@ -1,6 +1,5 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { AlertTriangleIcon } from 'lucide-react';
-import React from 'react'
 
 interface DeleteModalProps {
     isOpen: boolean;

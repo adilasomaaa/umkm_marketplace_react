@@ -11,7 +11,7 @@ import { sosialMediaService } from '@/services/SosialMediaService'
 import { tokoService } from '@/services/TokoService'
 import { ulasanService } from '@/services/UlasanService'
 import { Accordion, AccordionItem, Pagination, Tab, Tabs } from '@heroui/react'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 const TokoPage = () => {
@@ -179,7 +179,7 @@ const TokoPage = () => {
                     {sosialMedia && sosialMedia.length > 0 &&
                         <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4'>
                             {sosialMedia.map((item, index) => (
-                                <SosialMediaCard item={item} key={0}></SosialMediaCard>
+                                <SosialMediaCard item={item} key={index}></SosialMediaCard>
                             ))}
                         </div>
                     }
@@ -213,7 +213,7 @@ const TokoPage = () => {
                                         ))}
                                     </div>
                                     <div className="flex items-center justify-center">
-                                        <Pagination onChange={(page) => fetchProduk(toko.id, page)} showControls initialPage={paginationProdukInfo.page} total={paginationProdukInfo.totalPages} />
+                                        <Pagination onChange={(page) => fetchUlasan(toko.id, page)} showControls initialPage={paginationUlasanInfo.page} total={paginationUlasanInfo.totalPages} />
                                     </div>
                                 </>
                             }

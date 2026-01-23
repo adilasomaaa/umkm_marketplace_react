@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Popover, PopoverTrigger, PopoverContent, Tooltip } from "@heroui/react";
+import { Avatar, Button, Divider, Tooltip } from "@heroui/react";
 import { Bell, Compass, Home, Plus, Search } from "lucide-react";
 import Logo from '@/assets/logo2.png'
 import AvatarPhoto from '@/assets/avatar.jpg'

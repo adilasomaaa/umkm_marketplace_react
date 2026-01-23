@@ -2,10 +2,7 @@ import Jumbotron from '@/components/Landing/Jumbotron'
 import KategoriSection from '@/components/Landing/KategoriSection'
 import ProdukSection from '@/components/Landing/ProdukSection'
 import TokoSection from '@/components/Landing/TokoSection'
-import React from 'react'
-
 const LandingPage = () => {
-  const [activeTab, setActiveTab] = React.useState('teman')
   return (
     <>
       <Jumbotron/>

@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
-  Avatar,
   Chip,
 } from "@heroui/react";
 import DataTable, {
@@ -18,7 +17,7 @@ import type {
 import { roleService } from "@/services/RoleService";
 import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
 import InputModal from "@/components/Dashboard/InputModal";
-import { env } from "@/lib/env";
+
 import ShowModal from "@/components/Dashboard/ShowModal";
 import DeleteModal from "@/components/Dashboard/DeleteModal";
 import { useForm } from "react-hook-form";
@@ -27,7 +26,7 @@ import { roleSchema, type RoleSchema } from "@/schemas/RoleSchema";
 import { permissionsService } from "@/services/PermissionsService";
 import type { Permissions } from "@/models/permissions";
 
-const getFormFields = (mode: "create" | "update", availablePermissions: Permissions[]): FormFieldConfig[] => {
+const getFormFields = (_mode: "create" | "update", availablePermissions: Permissions[]): FormFieldConfig[] => {
   const allFields = {
     name: { key: "name", label: "Nama Role", type: "text", placeholder: "Masukkan nama role..." },
     permissions: {
@@ -235,7 +234,7 @@ const ManageRole = () => {
         status: statusValue || undefined,
       });
       setItems(response.data);
-      setPaginationInfo(response.meta);
+      setPaginationInfo(response.meta || { page: 1, limit: 10, totalData: 0, totalPages: 1 });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {

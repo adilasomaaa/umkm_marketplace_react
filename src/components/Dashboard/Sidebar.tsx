@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { Button, Tooltip, Avatar, Divider, Accordion, AccordionItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Image } from "@heroui/react";
+import { Button, Tooltip, Accordion, AccordionItem, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Image } from "@heroui/react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { filterByRole, NAV_ITEMS } from "./Nav";
 import { useMemo } from "react";

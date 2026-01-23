@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext'
 import type { DashboardAdmin, DashboardClient } from '@/models'
 import { dashboardService } from '@/services/DashboardService'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Loading from './Loading'
 import StatisticCard from './StatisticCard'
 
