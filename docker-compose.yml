@@ -1,0 +1,18 @@
+services:
+  umkm-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://api-inbiz.azhr.cloud/api/
+        - VITE_API_BASE_URL=https://api-inbiz.azhr.cloud/
+    container_name: umkm-frontend
+    restart: always
+    networks:
+      - proxy_network
+    ports:
+      - "8081:80"
+
+networks:
+  proxy_network:
+    external: true
