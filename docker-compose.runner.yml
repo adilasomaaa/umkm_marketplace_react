@@ -1,0 +1,13 @@
+services:
+  github-runner:
+    image: myoung34/github-runner:latest
+    container_name: github-test-runner
+    restart: always
+    environment:
+      - REPO_URL=https://github.com/muhammadazharr/biznet-umkm-react
+      - RUNNER_NAME=home-test-runner
+      - RUNNER_TOKEN=A3DNOCXQTCHXI7PE5PUA3IDKGDDBA
+      - RUNNER_SCOPE=repo
+      - LABELS=self-hosted
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
