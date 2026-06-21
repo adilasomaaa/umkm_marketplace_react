@@ -12,3 +12,4 @@ export * from "./sosialmedia";
 export * from "./produk";
 export * from "./ulasan";
 export * from "./dashboard";
+export * from "./hashtag";

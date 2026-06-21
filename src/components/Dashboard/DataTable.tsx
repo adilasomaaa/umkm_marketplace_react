@@ -16,7 +16,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import type { SortDescriptor, Selection } from "@heroui/react";
-import { ChevronDownIcon, PlusIcon, SearchIcon, MoreVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"; 
+import { ChevronDownIcon, PlusIcon, SearchIcon, MoreVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
 
 interface BaseFilter {
   key: string;
@@ -46,13 +46,13 @@ export interface DataTableProps<T> {
   filters?: FilterConfig[];
   filterState?: Record<string, any>;
   setFilterState?: React.Dispatch<React.SetStateAction<any>>;
-  
+
   filterValue: string;
   setFilterValue: (value: string) => void;
-  
+
   statusFilter?: Selection;
   setStatusFilter?: (keys: Selection) => void;
-  
+
   sortDescriptor: SortDescriptor;
   setSortDescriptor: (descriptor: SortDescriptor) => void;
 
@@ -67,7 +67,7 @@ export interface DataTableProps<T> {
 }
 
 function getNestedValue<T>(obj: T, path: string): any {
-  return path.split('.').reduce((acc:any, part) => acc && acc[part], obj);
+  return path.split('.').reduce((acc: any, part) => acc && acc[part], obj);
 }
 
 export type Column<T> = {
@@ -82,7 +82,7 @@ export function capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
-const DataTable = <T extends { id: React.Key; [key: string]: any }>({
+const DataTable = <T extends { id: React.Key;[key: string]: any }>({
   data,
   columns,
   isLoading,
@@ -110,7 +110,7 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
       columns.filter(col => col.defaultVisible).map(col => col.uid)
     );
   }, [columns]);
-  
+
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(initialVisibleColumns);
 
   const headerColumns = React.useMemo(() => {
@@ -120,12 +120,12 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
     });
 
     const rowNumberColumn: Column<T> = {
-        name: '#',
-        uid: 'rowNumber',
-        sortable: false,
-        defaultVisible: true,
+      name: '#',
+      uid: 'rowNumber',
+      sortable: false,
+      defaultVisible: true,
     };
-    
+
     return [rowNumberColumn, ...filteredCols];
   }, [visibleColumns, columns]);
 
@@ -164,16 +164,16 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
     const column = columns.find((col) => col.uid === (columnKey as string));
 
     if (column?.renderCell) {
-        return column.renderCell(item);
+      return column.renderCell(item);
     }
 
     const cellValue = getNestedValue(item, columnKey as string);
 
     switch (columnKey) {
       case 'rowNumber':
-          const index = data.findIndex(d => d.id === item.id);
-          if (index === -1) return null;
-          return (paginationInfo.page - 1) * paginationInfo.limit + index + 1;
+        const index = data.findIndex(d => d.id === item.id);
+        if (index === -1) return null;
+        return (paginationInfo.page - 1) * paginationInfo.limit + index + 1;
 
       case 'name':
         return cellValue as string;
@@ -191,23 +191,23 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
         );
 
       case 'actions':
-        if (headerColumns.length <= 5) {
+        if (headerColumns.length <= 6) {
           return (
             <div className="relative flex justify-end items-center gap-1">
               {onViewItem && (
-                  <Button isIconOnly size="sm" variant="light" onPress={() => onViewItem(item)}>
-                      <EyeIcon className="w-4 h-4 text-default-400" />
-                  </Button>
+                <Button isIconOnly size="sm" variant="light" onPress={() => onViewItem(item)}>
+                  <EyeIcon className="w-4 h-4 text-default-400" />
+                </Button>
               )}
               {onEditItem && (
-                  <Button isIconOnly size="sm" variant="light" onPress={() => onEditItem(item)}>
-                      <PencilIcon className="w-4 h-4 text-default-400" />
-                  </Button>
+                <Button isIconOnly size="sm" variant="light" onPress={() => onEditItem(item)}>
+                  <PencilIcon className="w-4 h-4 text-default-400" />
+                </Button>
               )}
               {onDeleteItem && (
-                  <Button isIconOnly size="sm" variant="light" onPress={() => onDeleteItem(item)}>
-                      <Trash2Icon className="w-4 h-4 text-default-400" />
-                  </Button>
+                <Button isIconOnly size="sm" variant="light" onPress={() => onDeleteItem(item)}>
+                  <Trash2Icon className="w-4 h-4 text-default-400" />
+                </Button>
               )}
             </div>
           );
@@ -245,13 +245,13 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
         return cellValue as React.ReactNode;
     }
   }, [
-    columns, 
-    statusColorMap, 
-    data, 
-    paginationInfo, 
+    columns,
+    statusColorMap,
+    data,
+    paginationInfo,
     headerColumns.length,
-    onViewItem, 
-    onEditItem, 
+    onViewItem,
+    onEditItem,
     onDeleteItem
   ]);
 
@@ -283,7 +283,7 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
                         aria-label={`${filter.label} Filter`}
                         closeOnSelect={false}
                         selectedKeys={filterState[filter.key] || new Set()}
-                        selectionMode={filter.selectionMode || 'multiple'} 
+                        selectionMode={filter.selectionMode || 'multiple'}
                         onSelectionChange={(keys) => {
                           setFilterState((prev: Record<string, any>) => ({ ...prev, [filter.key]: keys }));
                         }}
@@ -299,15 +299,15 @@ const DataTable = <T extends { id: React.Key; [key: string]: any }>({
                 case 'date':
                   return (
                     <div key={filter.key} className="flex flex-col">
-                       <label className="text-xs text-default-500">{filter.label}</label>
-                       <Input
-                          type="date"
-                          size="sm"
-                          value={filterState[filter.key] || ''}
-                          onChange={(e) => {
-                             setFilterState((prev: Record<string, any>) => ({ ...prev, [filter.key]: e.target.value }));
-                          }}
-                       />
+                      <label className="text-xs text-default-500">{filter.label}</label>
+                      <Input
+                        type="date"
+                        size="sm"
+                        value={filterState[filter.key] || ''}
+                        onChange={(e) => {
+                          setFilterState((prev: Record<string, any>) => ({ ...prev, [filter.key]: e.target.value }));
+                        }}
+                      />
                     </div>
                   );
                 default:

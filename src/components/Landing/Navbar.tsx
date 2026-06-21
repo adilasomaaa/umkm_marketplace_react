@@ -2,12 +2,21 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, N
 
 import Logo from '@/assets/logo2.png'
 import { Home, LogOut, SearchIcon } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import Avatar from '@/assets/avatar.jpg';
+import { useState } from 'react';
 
 const NavbarComponent = () => {
   const {user, logout} = useAuth()
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
   
   return (
     <Navbar maxWidth="xl">
@@ -26,10 +35,13 @@ const NavbarComponent = () => {
             inputWrapper:
               "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
           }}
-          placeholder="Cari di InBiz..."
+          placeholder="Cari produk atau #hashtag..."
           size="sm"
           startContent={<SearchIcon size={18} />}
           type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearch}
         />
       </NavbarContent>
       <NavbarContent justify="end">

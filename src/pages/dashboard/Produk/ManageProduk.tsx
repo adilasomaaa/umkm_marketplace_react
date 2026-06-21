@@ -1,110 +1,27 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardBreadcrumbs from "@/components/Dashboard/Breadcrumbs";
 import {
   type SortDescriptor,
   type Selection,
   Avatar,
   Chip,
-  AutocompleteItem,
+  Button,
 } from "@heroui/react";
 import DataTable, {
   type Column,
   type FilterConfig,
 } from "@/components/Dashboard/DataTable";
-import type {
-  Cabang,
-  Kategori,
-  Produk,
-  ProdukCreatePayload,
-  ProdukUpdatePayload
-} from "@/models";
+import type { Produk } from "@/models";
 import { produkService } from "@/services/ProdukService";
-import type { DisplayFieldConfig, FormFieldConfig } from "@/types";
-import InputModal from "@/components/Dashboard/InputModal";
+import type { DisplayFieldConfig } from "@/types";
 import { env } from "@/lib/env";
 import ShowModal from "@/components/Dashboard/ShowModal";
 import DeleteModal from "@/components/Dashboard/DeleteModal";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cabangService } from "@/services/CabangService";
-import { kategoriService } from "@/services/KategoriService";
-import { produkSchema, type ProdukSchema } from "@/schemas/ProdukSchema";
 import { useAuth } from "@/context/AuthContext";
 import { currency_format } from "@/lib/number_format";
-import { useFilter } from "@react-aria/i18n";
-import { Link } from "react-router-dom";
-
-const renderDefaultCategoryItem = (item: { label: string; value: string | number }) => {
-    return (
-        <AutocompleteItem key={String(item.value)} textValue={item.label}>
-            {item.label}
-        </AutocompleteItem>
-    );
-};
-const getFormFields = (mode: "create" | "update", availableCategory: Kategori[], availableBranch: Cabang[], initialData: Produk | null): FormFieldConfig[] => {
-  const allFields = {
-    nama_produk: {
-      key: "nama_produk",
-      label: "Nama Produk",
-      type: "text",
-      placeholder: "Masukkan nama produk...",
-    },
-    deskripsi: {
-      key: "deskripsi",
-      label: "Deskripsi",
-      type: "textarea",
-      placeholder: "Masukkan deskripsi...",
-    },
-    harga: {
-      key: "harga",
-      label: "Harga",
-      type: "number",
-      placeholder: "Masukkan harga...",
-    },
-    kategoriId: {
-      key: "kategoriId",
-      label: "Kategori",
-      type: "autocomplete",
-      placeholder: "Pilih kategori...",
-      options: availableCategory.map(kategori => ({
-        label: kategori.nama_kategori,
-        value: kategori.id as number,
-      })),
-      renderItem: renderDefaultCategoryItem
-    },
-    cabang_ids: {
-      key: "cabangIds",
-      label: "Cabang",
-      type: "multi-select",
-      placeholder: "Pilih cabang...",
-      options: availableBranch.map(cabang => ({
-        label: cabang.nama_cabang,
-        value: cabang.id as number,
-      })),
-    },
-    thumbnail: {
-      key: "thumbnail",
-      label: "Thumbnail",
-      type: "upload",
-      placeholder: "Pilih file thumbnail (PNG, JPG)",
-      maxSize: 5 * 1024 * 1024,
-      allowedExtensions: ['.png', '.jpg', '.jpeg'],
-      previewUrl: mode === "update" ? env.baseUrl + initialData?.thumbnail : "",
-    },
-    status: {
-      key: "status",
-      label: "Status",
-      type: "select",
-      placeholder: "Pilih status...",
-      options: [
-        { label: "tampilkan", value: "tampilkan" },
-        { label: "sembunyikan", value: "sembunyikan" },
-      ],
-    },
-  } as const;
-
-  return [allFields.nama_produk, allFields.deskripsi, allFields.harga, allFields.kategoriId, allFields.cabang_ids, allFields.thumbnail, allFields.status];
-};
+import { Link, useNavigate } from "react-router-dom";
+import ManageHashtagModal from "@/components/Dashboard/ManageHashtagModal";
+import { Tag } from "lucide-react";
 
 const produkColumns: Column<Produk>[] = [
   {
@@ -115,11 +32,20 @@ const produkColumns: Column<Produk>[] = [
     renderCell: (item: Produk) => (
       <Link to={`/dashboard/manage-product/${item.id}`} className="cursor-pointer">
         <div className="flex items-center gap-4">
-            <Avatar src={env.baseUrl + item.thumbnail} />
-            <div className="flex flex-col">
-              <span>{item.nama_produk}</span>
-              <span className="text-gray-500">{item.totalUlasan} ulasan</span>
-            </div>
+          <Avatar src={item.thumbnail && !item.thumbnail.includes('null') && !item.thumbnail.includes('undefined') ? env.baseUrl + item.thumbnail : undefined} />
+          <div className="flex flex-col">
+            <span className="font-medium text-gray-900 dark:text-white">{item.nama_produk}</span>
+            {item.hashtags && item.hashtags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {item.hashtags.map((ph) => (
+                  <Chip key={ph.id} size="sm" variant="flat" color="secondary" className="text-[10px] h-4 min-h-4 px-1">
+                    #{ph.hashtag?.nama || ""}
+                  </Chip>
+                ))}
+              </div>
+            )}
+            <span className="text-gray-500 text-xs mt-0.5">{item.totalUlasan} ulasan</span>
+          </div>
         </div>
       </Link>
     ),
@@ -131,7 +57,7 @@ const produkColumns: Column<Produk>[] = [
     defaultVisible: true, 
     renderCell: (item: Produk) => (
       <div className="flex items-center gap-2">
-        <Chip size="sm" color="primary">{item.kategori.nama_kategori}</Chip>
+        <Chip size="sm" color="primary">{item.kategori?.nama_kategori || ""}</Chip>
       </div>
     )
   },
@@ -140,10 +66,21 @@ const produkColumns: Column<Produk>[] = [
     sortable: true, 
     defaultVisible: true, 
     renderCell: (item: Produk) => (
-      <div className="flex items-center gap-2">
-        {item.produkCabangs.map((cabang, index) => (
-          <Chip size="sm" variant="dot" key={`${index}-${cabang.id}`} color={index === 0 ? "primary" : "default"}>{cabang.cabang.nama_cabang}</Chip>
-        ))}
+      <div className="flex flex-wrap gap-1.5 max-w-[250px]">
+        {item.produkCabangs?.map((pc, index) => {
+          const isTersedia = pc.status === "tersedia";
+          return (
+            <Chip
+              size="sm"
+              variant="flat"
+              key={`${index}-${pc.id}`}
+              color={isTersedia ? "success" : "danger"}
+              className="text-xs font-medium"
+            >
+              {pc.cabang?.nama_cabang || "Cabang"} ({isTersedia ? "Tersedia" : "Habis"})
+            </Chip>
+          );
+        })}
       </div>
     )
   },
@@ -163,10 +100,11 @@ const produkColumns: Column<Produk>[] = [
 ];
 
 const ManageProduk = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletingItem, setDeletingItem] = useState<Produk | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Produk | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<Produk[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -176,66 +114,10 @@ const ManageProduk = () => {
     totalData: 0,
     totalPages: 1,
   });
+  
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [viewingItem, setViewingItem] = useState<Produk | null>(null);
-  const [categories, setCategories] = useState<Kategori[]>([]);
-  const [branch, setBranch] = useState<Cabang[]>([]);
-  const { user } = useAuth();
-
-  const fullCategoryOptions = React.useMemo(() => {
-    return categories.map(kategori => ({
-        label: kategori.nama_kategori,
-        value: kategori.id as number,
-    }));
-  }, [categories]);
-
-  const [categoryInputValue, setCategoryInputValue] = useState("");
-  const [filteredCategoryItems, setFilteredCategoryItems] = useState(fullCategoryOptions);
-  
-  const { startsWith } = useFilter({ sensitivity: "base" });
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categories = await kategoriService.index({
-          limit: 100,
-          tipe: "produk"
-        });
-        setCategories(categories.data);
-      } catch (error) {
-        console.error("Gagal mengambil kategori:", error);
-      }
-    }
-    const fetchBranchs = async () => {
-      try {
-        const branchs = await cabangService.index({
-          limit: 100,
-          tokoId: user?.toko?.id
-        });
-        setBranch(branchs.data);
-      } catch (error) {
-        console.error("Gagal mengambil cabang:", error);
-      }
-    }
-
-    fetchCategories();
-    fetchBranchs();
-  }, []);
-
-  useEffect(() => {
-    setFilteredCategoryItems(fullCategoryOptions);
-  }, [fullCategoryOptions]);
-
-  useEffect(() => {
-    if (categoryInputValue === "") {
-        setFilteredCategoryItems(fullCategoryOptions);
-    } else {
-        const filtered = fullCategoryOptions.filter(item => 
-            startsWith(item.label, categoryInputValue)
-        );
-        setFilteredCategoryItems(filtered);
-    }
-  }, [categoryInputValue, startsWith, fullCategoryOptions]);
+  const [isHashtagModalOpen, setIsHashtagModalOpen] = useState(false);
 
   const handleOpenDeleteModal = (item: Produk) => {
     setDeletingItem(item);
@@ -248,67 +130,12 @@ const ManageProduk = () => {
   };
 
   const handleOpenEditModal = (item: Produk) => {
-    const cabangIds = item.produkCabangs.map(pc => pc.cabang.id as number);
-    const customItems = {
-      cabangIds: cabangIds,
-      ...item
-    }    
-    console.log(customItems);
-    
-    setEditingItem(customItems);
-    setIsModalOpen(true);
+    navigate(`/dashboard/manage-product/edit/${item.id}`);
   };
 
   const handleOpenCreateModal = () => {
-    reset();
-    setEditingItem(null);
-    setIsModalOpen(true);
+    navigate("/dashboard/manage-product/create");
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingItem(null);
-  };
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm<ProdukSchema>({
-    resolver: zodResolver(produkSchema),
-    mode: 'onChange',
-  });
-
-  const handleCategorySelectionChange = useCallback((key: string | number) => {
-      setValue('kategoriId', key, { shouldValidate: true });
-      const selectedItem = fullCategoryOptions.find(item => String(item.value) === String(key));
-      if (selectedItem) {
-        setCategoryInputValue(selectedItem.label);
-      }
-  }, [setValue, fullCategoryOptions]);
-
-  useEffect(() => {
-    if (editingItem) {
-      reset({...editingItem, thumbnail: ""});
-      const selectedCategory = fullCategoryOptions.find(opt => opt.value === editingItem.kategoriId);
-      if (selectedCategory) {
-          setCategoryInputValue(selectedCategory.label);
-      }
-    } else {
-      reset({
-        nama_produk: "",
-        harga: "",
-        deskripsi: "",
-        kategoriId: "",
-        cabangIds: [],
-        thumbnail: "",
-      });
-      setCategoryInputValue(""); // Kosongkan saat mode create
-    }
-  }, [editingItem, reset, fullCategoryOptions]);
 
   const displayFields: DisplayFieldConfig<Produk>[] = [
     { key: "nama_produk", label: "Nama Produk" },
@@ -316,7 +143,6 @@ const ManageProduk = () => {
       return `${currency_format(item.harga)}`
     }, },
     { key: "kategori.nama_kategori", label: "Nama Kategori" },
-    
     {
       key: "createdAt",
       label: "Tanggal Bergabung",
@@ -338,9 +164,6 @@ const ManageProduk = () => {
     setIsViewModalOpen(false);
     setViewingItem(null);
   };
-
-  const formMode = editingItem ? "update" : "create";
-  const activeFormFields = getFormFields(formMode, categories, branch, editingItem);
 
   const [filterValue, setFilterValue] = useState("");
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -386,7 +209,7 @@ const ManageProduk = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [paginationInfo.page, paginationInfo.limit, filterValue, filterState]);
+  }, [paginationInfo.page, paginationInfo.limit, filterValue, filterState, user?.toko?.id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -396,30 +219,6 @@ const ManageProduk = () => {
       clearTimeout(timer);
     };
   }, [fetchItems]);
-
-  const onSubmit = async (formData: Record<string, any>) => {
-    setIsSubmitting(true);
-    try {
-      const payload = {
-        ...formData,
-        tokoId: user?.toko?.id,
-      }
-      if (editingItem) {
-        await produkService.update(
-          Number(editingItem.id),
-          payload as ProdukUpdatePayload
-        );
-      } else {
-        await produkService.create(payload as ProdukCreatePayload);
-      }
-      handleCloseModal();
-      await fetchItems();
-    } catch (error) {
-      console.error("Gagal menyimpan data:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleConfirmDelete = async () => {
     if (!deletingItem) return;
@@ -438,7 +237,18 @@ const ManageProduk = () => {
   return (
     <div>
       <DashboardBreadcrumbs />
-      <h1 className="text-2xl font-semibold my-4">Manage Produk</h1>
+      <div className="flex justify-between items-center my-4">
+        <h1 className="text-2xl font-semibold">Manage Produk</h1>
+        <Button
+          color="secondary"
+          variant="flat"
+          startContent={<Tag className="w-4 h-4" />}
+          onPress={() => setIsHashtagModalOpen(true)}
+          className="shadow-sm font-medium"
+        >
+          Kelola Hashtag
+        </Button>
+      </div>
       <DataTable
         data={items}
         isLoading={isLoading}
@@ -457,29 +267,6 @@ const ManageProduk = () => {
         onViewItem={handleOpenViewModal}
         onDeleteItem={handleOpenDeleteModal}
       />
-      <InputModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={
-          editingItem ? "Edit Produk" : "Tambah Produk Baru"
-        }
-        fields={activeFormFields}
-        register={register}
-        onSubmit={handleSubmit(onSubmit)}
-        errors={errors}
-        setValue={setValue}
-        watch={watch}
-        isLoading={isSubmitting}
-        autocompleteProps={{ // ✨ Kirim Props untuk Controlled Autocomplete
-            kategoriId: {
-                inputValue: categoryInputValue, 
-                items: filteredCategoryItems,
-                onInputChange: setCategoryInputValue,
-                onSelectionChange: handleCategorySelectionChange,
-                selectedKey: watch('kategoriId'),
-            }
-        }}
-      />
       <ShowModal<Produk>
         isOpen={isViewModalOpen}
         onClose={handleCloseViewModal}
@@ -494,6 +281,12 @@ const ManageProduk = () => {
         title="Hapus Produk"
         message={`Apakah Anda yakin ingin menghapus "${deletingItem?.nama_produk}"? Aksi ini tidak dapat dibatalkan.`}
         isLoading={isSubmitting}
+      />
+      <ManageHashtagModal
+        isOpen={isHashtagModalOpen}
+        onClose={() => setIsHashtagModalOpen(false)}
+        tokoId={user?.toko?.id}
+        onHashtagsChanged={fetchItems}
       />
     </div>
   );

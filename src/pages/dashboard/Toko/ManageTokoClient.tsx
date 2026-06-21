@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Card,
-  Image,
   Button,
   CardHeader,
   Divider,
@@ -16,8 +15,8 @@ import {
 } from "@/models";
 import { tokoService } from "@/services/TokoService";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowRightCircle, PencilIcon,ShoppingBagIcon, StarIcon } from "lucide-react";
-import DefaultShop from '@/assets/default_shop.png';
+import { ArrowRightCircle, PencilIcon, ShoppingBagIcon, StarIcon, MapPin, Info, Store, Tag, Phone, Calendar } from "lucide-react";
+import SafeImage from "@/components/SafeImage";
 import InputModal from "@/components/Dashboard/InputModal";
 import type { FormFieldConfig } from "@/types";
 import { kategoriService } from "@/services/KategoriService";
@@ -109,7 +108,7 @@ const ManageTokoClient = () => {
           );
         }
         handleCloseModal();
-        await fetchTokoSayaCallback();
+        await fetchTokoSayaCallback(true);
       } catch (error) {
         console.error("Gagal menyimpan data:", error);
       } finally {
@@ -174,17 +173,17 @@ const ManageTokoClient = () => {
     setEditingItem(null);
   };
 
-  const fetchTokoSayaCallback = useCallback(async () => {
-    setLoading(true);
+  const fetchTokoSayaCallback = useCallback(async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true);
     try {
       const toko = await tokoService.client(user?.toko?.id || 0);
       setTokoSaya(toko.data);
-      setLoading(false);
     } catch (error) {
       console.error("Gagal mengambil data toko saya:", error);
-      setLoading(false);
+    } finally {
+      if (!isRefresh) setLoading(false);
     }
-  }, [user, tokoService]);
+  }, [user]);
 
   useEffect(() => {
     fetchTokoSayaCallback();
@@ -201,157 +200,238 @@ const ManageTokoClient = () => {
   if (!tokoSaya) {
     return (
       <div className="p-6">
-        <Card className="max-w-xl mx-auto border-dashed border-2 border-default-300 bg-default-50 ">
-            <CardHeader className="flex flex-col items-center justify-center p-6 pb-2">
-                <ShoppingBagIcon className="h-10 w-10 text-primary-500 mb-3" />
-                <h3 className="text-xl font-bold text-default-800">Toko Belum Terdaftar</h3>
+        <Card className="max-w-2xl mx-auto border border-default-100 shadow-lg bg-white rounded-3xl overflow-hidden animate-fade-in-up">
+            <div className="h-4 bg-gradient-to-r from-success-500 to-emerald-600" />
+            <CardHeader className="flex flex-col items-center justify-center p-8 pb-4">
+                <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center mb-4 border border-success-100 shadow-inner animate-pulse">
+                    <ShoppingBagIcon className="h-8 w-8 text-success-600" />
+                </div>
+                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Toko Belum Terdaftar</h3>
             </CardHeader>
-            <CardBody className="pt-0 text-center">
-                <p className="text-default-600 mb-4">
-                    Anda belum memiliki toko yang terdaftar sebagai klien. Silakan buat pendaftaran toko Anda terlebih dahulu.
+            <CardBody className="px-8 pb-8 text-center flex flex-col items-center gap-4">
+                <p className="text-default-500 font-medium text-sm max-w-md">
+                    Anda belum memiliki toko yang terdaftar sebagai klien. Silakan hubungi admin atau daftarkan toko Anda untuk mulai mengelola cabang, produk, dan melihat ulasan.
                 </p>
+                <div className="w-full h-px bg-default-100 my-2" />
+                <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+                    <Link to="/">
+                      <Button color="success" className="font-bold text-white bg-gradient-to-r from-success-600 to-emerald-600" radius="lg">
+                        Kembali ke Beranda
+                      </Button>
+                    </Link>
+                </div>
             </CardBody>
         </Card>
-      
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       <StatisticSection/>
-      {tokoSaya ? (
-        <div className="grid grid-cols-5 grid-rows-1 gap-4">
-          <div className="col-span-3">
-            <Card>
-              <CardHeader className="flex gap-3">
-                 <Image
-                  alt="Woman listing to music"
-                  className="object-cover"
-                  height={100}
-                  src={env.baseUrl + tokoSaya.logo || DefaultShop}
-                  width={100}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Left Column: Store Profile & Details */}
+        <div className="lg:col-span-3 flex flex-col gap-6">
+          <Card className="shadow-sm border border-default-100 overflow-hidden">
+            {/* Cover Banner */}
+            <div className="h-32 bg-gradient-to-r from-success-500/20 via-emerald-500/20 to-teal-500/10 rounded-t-3xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5" />
+              <div className="absolute right-6 top-6 z-10 flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-sm font-semibold select-none">
+                <StarIcon className="h-4 w-4 fill-warning-400 stroke-warning-400" />
+                <span className="text-sm text-gray-800">{tokoSaya.rating || "0.0"}</span>
+              </div>
+            </div>
+
+            {/* Profile Logo & Title */}
+            <div className="px-6 pb-6 relative flex flex-col sm:flex-row gap-4 items-start sm:items-end -mt-10">
+              <div className="relative group shrink-0">
+                <SafeImage
+                  alt={tokoSaya.nama_toko}
+                  className="object-cover border-4 border-white bg-white shadow-md rounded-2xl w-24 h-24 sm:w-28 sm:h-28"
+                  src={tokoSaya.logo ? env.baseUrl + tokoSaya.logo : undefined}
+                  fallbackType="toko"
                 />
-                <div className="flex flex-col gap-2 ">
-                  <p className="text-lg font-semibold">{tokoSaya.nama_toko}</p>
-                  <p className="text-small text-default-500">
-                    {tokoSaya.CabangToko[0].alamat && tokoSaya.CabangToko[0].alamat || "Alamat Toko belum diatur"}
-                    </p>
-                  <div className="flex gap-4">
-                    <Button
-                      color="default"
-                      size="sm"
-                      variant="flat"
-                      className="ml-auto"
-                      onPress={() => handleOpenEditModal(tokoSaya)}
-                    >
-                      <PencilIcon className="h-4 w-4"></PencilIcon> Perbarui Toko
-                    </Button>
-                    <Link to={`/${tokoSaya.slug}`} target="_blank" rel="noopener noreferrer">
-                      <Button
-                        color="primary"
-                        size="sm"
-                        variant="flat"
-                        className="ml-auto"
-                      >
-                        <ArrowRightCircle className="h-4 w-4"></ArrowRightCircle> Lihat Toko
-                      </Button>
-                    </Link>
+              </div>
+              <div className="flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 w-full">
+                <div className="flex flex-col gap-1 text-left">
+                  <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{tokoSaya.nama_toko}</h2>
+                  <div className="flex items-center gap-1 text-sm text-default-500 font-medium">
+                    <MapPin className="w-4 h-4 text-success-600 shrink-0" />
+                    <span>
+                      {tokoSaya.CabangToko && tokoSaya.CabangToko.length > 0 && tokoSaya.CabangToko[0].alamat
+                        ? tokoSaya.CabangToko[0].alamat
+                        : "Alamat Toko belum diatur"}
+                    </span>
                   </div>
                 </div>
-                <div className="flex ml-auto items-center gap-1 text-yellow-500 font-semibold">
-                  <StarIcon className="h-6 w-6 inline-block"></StarIcon>
-                  <span className="inline-block text-[30px]">{tokoSaya.rating || "0.0"}</span>
+                <div className="flex gap-2">
+                  <Button
+                    color="default"
+                    size="sm"
+                    variant="flat"
+                    className="font-bold border border-default-200"
+                    onPress={() => handleOpenEditModal(tokoSaya)}
+                    startContent={<PencilIcon className="h-4 w-4" />}
+                    radius="md"
+                  >
+                    Perbarui Toko
+                  </Button>
+                  <Link to={`/${tokoSaya.slug}`} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      color="success"
+                      size="sm"
+                      className="font-bold text-white bg-gradient-to-r from-success-600 to-emerald-600"
+                      startContent={<ArrowRightCircle className="h-4 w-4" />}
+                      radius="md"
+                    >
+                      Lihat Toko
+                    </Button>
+                  </Link>
                 </div>
-              </CardHeader>
-              <Divider />
-              <CardBody>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Deskripsi Toko</h3>
-                  <p className="text-default-700 mb-4">
-                    {tokoSaya.deskripsi && tokoSaya.deskripsi || "Deskripsi Toko belum diatur"}
+              </div>
+            </div>
+
+            <Divider />
+
+            {/* Store Information Grid */}
+            <CardBody className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                {/* Description */}
+                <div className="col-span-1 md:col-span-2 bg-default-50/50 p-5 rounded-2xl border border-default-100/60">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Info className="w-5 h-5 text-success-600" />
+                    <h3 className="text-md font-bold text-gray-800">Deskripsi Toko</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed text-justify whitespace-pre-line">
+                    {tokoSaya.deskripsi || "Deskripsi Toko belum diatur"}
                   </p>
                 </div>
-                <Divider/>
-                <div className="my-4 grid gap-4 grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Cabang Toko</h3>
+
+                {/* Cabang Toko */}
+                <div className="bg-default-50/50 p-5 rounded-2xl border border-default-100/60 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Store className="w-5 h-5 text-success-600" />
+                    <h3 className="text-md font-bold text-gray-800">Cabang Toko</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     {tokoSaya.CabangToko && tokoSaya.CabangToko.length > 0 ? (
-                        tokoSaya.CabangToko.map((kt) => (
-                          <Chip key={kt.id} color="primary" variant="flat" size="sm">
-                            {kt.nama_cabang}
-                          </Chip>
-                        ))
-                      ) : (
-                        <p className="text-small text-default-500">Kategori belum diatur</p>
-                      )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Kategori Toko</h3>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {tokoSaya.KategoriToko && tokoSaya.KategoriToko.length > 0 ? (
-                        tokoSaya.KategoriToko.map((kt) => (
-                          <Chip key={kt.id} color="primary" variant="flat" size="sm">
-                            {kt.kategori.nama_kategori}
-                          </Chip>
-                        ))
-                      ) : (
-                        <p className="text-small text-default-500">Kategori belum diatur</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Kontak Toko</h3>
-                    <p className="text-default-700 mb-4">
-                      {tokoSaya.nomor_hp && tokoSaya.nomor_hp || "Kontak Toko belum diatur"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Mulai Bergabung</h3>
-                    <p className="text-default-700 mb-4">
-                      {tokoSaya.createdAt && parseDate(tokoSaya.createdAt) || "Kontak Toko belum diatur"}
-                    </p>
+                      tokoSaya.CabangToko.map((c) => (
+                        <Chip key={c.id} color="success" variant="flat" size="sm" className="font-bold">
+                          {c.nama_cabang}
+                        </Chip>
+                      ))
+                    ) : (
+                      <span className="text-sm text-default-400 font-medium">Cabang belum diatur</span>
+                    )}
                   </div>
                 </div>
-              </CardBody>
-            </Card>
-          </div>
-          <div className="col-span-2">
-            <Card>
-              <CardHeader className="flex gap-3">
-                <h3 className="text-lg font-semibold">Ulasan Toko</h3>
-              </CardHeader> 
-              <Divider/>
-              <CardBody>
-                <div className="flex flex-col gap-4">
-                  {ulasan && ulasan.length > 0 ? (
-                    ulasan.map((ulasan) => (
-                      <UlasanCard key={ulasan.id} ulasan={ulasan}></UlasanCard>
-                      
-                    ))
-                  ) : (
-                    <p className="text-small text-default-500">Belum ada ulasan</p>
-                  )}
+
+                {/* Kategori Toko */}
+                <div className="bg-default-50/50 p-5 rounded-2xl border border-default-100/60 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Tag className="w-5 h-5 text-success-600" />
+                    <h3 className="text-md font-bold text-gray-800">Kategori Toko</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {tokoSaya.KategoriToko && tokoSaya.KategoriToko.length > 0 ? (
+                      tokoSaya.KategoriToko.map((kt) => (
+                        <Chip key={kt.id} color="primary" variant="flat" size="sm" className="font-bold">
+                          {kt.kategori.nama_kategori}
+                        </Chip>
+                      ))
+                    ) : (
+                      <span className="text-sm text-default-400 font-medium">Kategori belum diatur</span>
+                    )}
+                  </div>
                 </div>
-              </CardBody>
-            </Card>
-          </div>
-      </div>
-      ) : (
-        <div className="border p-4 rounded-lg shadow-sm">
-          <p>Anda belum memiliki toko. Silakan buat toko terlebih dahulu.</p>
-          
+
+                {/* Kontak Toko */}
+                <div className="bg-default-50/50 p-5 rounded-2xl border border-default-100/60 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Phone className="w-5 h-5 text-success-600" />
+                    <h3 className="text-md font-bold text-gray-800">Kontak Toko</h3>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {tokoSaya.nomor_hp || "Kontak Toko belum diatur"}
+                  </span>
+                </div>
+
+                {/* Mulai Bergabung */}
+                <div className="bg-default-50/50 p-5 rounded-2xl border border-default-100/60 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Calendar className="w-5 h-5 text-success-600" />
+                    <h3 className="text-md font-bold text-gray-800">Mulai Bergabung</h3>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {tokoSaya.createdAt ? parseDate(tokoSaya.createdAt) : "Tanggal tidak diketahui"}
+                  </span>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
         </div>
-      )}
-    <InputModal
+
+        {/* Right Column: Store Reviews */}
+        <div className="lg:col-span-2 flex flex-col gap-6 text-left">
+          <Card className="shadow-sm border border-default-100">
+            <CardHeader className="flex flex-col gap-3 items-start pb-2">
+              <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">Ulasan Toko</h3>
+              
+              {/* Rating Summary Banner */}
+              <div className="w-full bg-gradient-to-r from-warning-50 to-amber-50/50 border border-warning-100 rounded-2xl p-4 flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-warning-700 uppercase tracking-wider">Rating Toko</span>
+                  <span className="text-3xl font-black text-warning-600 mt-1">{tokoSaya.rating || "0.0"}</span>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => {
+                      const starValue = i + 1;
+                      const rating = parseFloat(tokoSaya.rating || "0.0");
+                      const isFilled = starValue <= rating;
+                      return (
+                        <StarIcon 
+                          key={i} 
+                          className={`w-4 h-4 ${
+                            isFilled 
+                              ? 'fill-warning-400 stroke-warning-400' 
+                              : 'text-default-300 stroke-default-300'
+                          }`} 
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="text-xs font-semibold text-warning-700 mt-1">Ulasan Pelanggan</span>
+                </div>
+              </div>
+            </CardHeader>
+            <Divider className="my-2" />
+            <CardBody className="pt-2">
+              <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1 scrollbar-thin">
+                {ulasan && ulasan.length > 0 ? (
+                  ulasan.map((item) => (
+                    <div key={item.id} className="transition-all duration-300 hover:scale-[1.01]">
+                      <UlasanCard key={item.id} ulasan={item}></UlasanCard>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <StarIcon className="w-12 h-12 text-default-300 mb-3" />
+                    <p className="text-sm font-bold text-gray-700">Belum ada ulasan</p>
+                    <p className="text-xs text-default-400 mt-1">Ulasan dari pelanggan akan ditampilkan di sini.</p>
+                  </div>
+                )}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+
+      <InputModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={
-          editingItem ? "Edit Toko" : "Tambah Toko Baru"
-        }
+        title={editingItem ? "Edit Toko" : "Tambah Toko Baru"}
         fields={activeFormFields}
         register={register}
         onSubmit={handleSubmit(onSubmit)}

@@ -38,7 +38,8 @@ const ImageUploadField: React.FC<ImageUploadFieldComponentProps> = ({
 
       return () => URL.revokeObjectURL(objectUrl);
     } else if (field.previewUrl && !fileValue) {
-      setPreview(field.previewUrl);
+      const isUrlInvalid = field.previewUrl.endsWith('/null') || field.previewUrl.endsWith('/undefined') || field.previewUrl.includes('null') || field.previewUrl.includes('undefined');
+      setPreview(isUrlInvalid ? null : field.previewUrl);
     } else if (!fileValue) {
       setPreview(null);
     }

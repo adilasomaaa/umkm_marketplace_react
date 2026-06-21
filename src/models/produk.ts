@@ -1,6 +1,7 @@
 import type { Cabang } from "./cabang";
 import type { Kategori } from "./kategori";
 import type { Toko } from "./toko";
+import type { Hashtag } from "./hashtag";
 
 export type Produk = {
   id: number;
@@ -22,6 +23,12 @@ export type Produk = {
     cabang: Cabang;
     status: "tersedia" | "habis";
   }[];
+  hashtags?: {
+    id: number;
+    produkId: number;
+    hashtagId: number;
+    hashtag: Hashtag;
+  }[];
   username?: string;
   createdAt?: string;
 };
@@ -32,7 +39,8 @@ export type ProdukUpdatePayload = {
   deskripsi: string;
   harga: number;
   kategoriId: number;
-  cabangIds: string;
+  cabangData: { cabangId: number; status: "tersedia" | "habis" }[];
+  hashtagIds?: number[];
   thumbnail: string;
   status: "tampilkan" | "sembunyikan";
 };
@@ -43,7 +51,8 @@ export type ProdukCreatePayload = {
   deskripsi: string;
   harga: number;
   kategoriId: number;
-  cabangIds: string;
+  cabangData: { cabangId: number; status: "tersedia" | "habis" }[];
+  hashtagIds?: number[];
   thumbnail: string;
   status: "tampilkan" | "sembunyikan";
 };

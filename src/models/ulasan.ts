@@ -7,6 +7,7 @@ export type Ulasan = {
   nilai: number;
   komentar?: string;
   status: "menunggu" | "terima" | "tolak";
+  balasan?: string;
   produk: Produk;
   createdAt?: string;
 };
@@ -19,7 +20,8 @@ export type UlasanCreatePayload = {
 };
 
 export type UlasanUpdatePayload = {
-  status: "menunggu" | "terima" | "tolak";
+  status?: "menunggu" | "terima" | "tolak";
+  balasan?: string;
 };
 
 export interface PaginatedUlasanResponse {
