@@ -18,9 +18,8 @@ type FetcherOptions = {
   // override BASE_URL bila perlu
 };
 
-const BASE_URL = env.apiUrl;
-
-
+const ensureTrailingSlash = (url: string) => url.endsWith('/') ? url : url + '/';
+const BASE_URL = ensureTrailingSlash(env.apiUrl);
 
 export async function http<T>(
   path: string,
@@ -36,7 +35,7 @@ export async function http<T>(
     contentType = "json",
   }: FetcherOptions = {}
 ): Promise<T> {
-  const url = new URL(path, baseUrl ?? BASE_URL);
+  const url = new URL(path, baseUrl ? ensureTrailingSlash(baseUrl) : BASE_URL);
 
   if (query) {
     Object.entries(query).forEach(([k, v]) => {
