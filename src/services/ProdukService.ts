@@ -46,6 +46,8 @@ export const produkService = {
         } else {
           formData.append(key, String(value));
         }
+      } else if (key === "cabangData") {
+        formData.append(key, JSON.stringify(value));
       } else if (Array.isArray(value)) {
         value.forEach((item) => formData.append(`${key}[]`, String(item)));
       } else {
@@ -96,6 +98,8 @@ export const produkService = {
         } else {
           formData.append(key, String(value));
         }
+      } else if (key === "cabangData") {
+        formData.append(key, JSON.stringify(value));
       } else if (Array.isArray(value)) {
         value.forEach((item) => formData.append(`${key}[]`, String(item)));
       } else {

@@ -4,6 +4,7 @@ import { dashboardService } from '@/services/DashboardService'
 import { useEffect, useState } from 'react'
 import Loading from './Loading'
 import StatisticCard from './StatisticCard'
+import { Store, MessageSquare, UserCheck, ShoppingBag, MapPin, Users } from 'lucide-react'
 
 const StatisticSection = () => {
     const auth = useAuth()
@@ -36,7 +37,7 @@ const StatisticSection = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-48">
                 <Loading></Loading>
             </div>
         );
@@ -46,19 +47,66 @@ const StatisticSection = () => {
     <div>
         {
             isAdmin ? 
-            <div className="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-4 gap-4">
-                <StatisticCard title="Total Toko" total={itemAdmin.data.totalToko} key={1}></StatisticCard>
-                <StatisticCard title="Total Ulasan" total={itemAdmin.data.totalUlasan} key={1}></StatisticCard>
-                <StatisticCard title="Total Pendaftar" total={itemAdmin.data.totalProduk} key={1}></StatisticCard>
-                <StatisticCard title="Total Produk" total={itemAdmin.data.totalProduk} key={1}></StatisticCard>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 my-4 gap-6">
+                <StatisticCard 
+                    title="Total Toko" 
+                    total={itemAdmin.data.totalToko} 
+                    icon={<Store className="w-6 h-6" />} 
+                    color="primary" 
+                    key={1}
+                />
+                <StatisticCard 
+                    title="Total Ulasan" 
+                    total={itemAdmin.data.totalUlasan} 
+                    icon={<MessageSquare className="w-6 h-6" />} 
+                    color="warning" 
+                    key={2}
+                />
+                <StatisticCard 
+                    title="Total Pendaftar" 
+                    total={itemAdmin.data.totalPendaftar} 
+                    icon={<UserCheck className="w-6 h-6" />} 
+                    color="success" 
+                    key={3}
+                />
+                <StatisticCard 
+                    title="Total Produk" 
+                    total={itemAdmin.data.totalProduk} 
+                    icon={<ShoppingBag className="w-6 h-6" />} 
+                    color="secondary" 
+                    key={4}
+                />
             </div>
             :
-            <div className="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-4 gap-4">
-                <StatisticCard title="Total Cabang" total={itemClient.data.totalCabang} key={1}></StatisticCard>
-                <StatisticCard title="Total Produk" total={itemClient.data.totalProduk} key={1}></StatisticCard>
-                <StatisticCard title="Total Pengguna" total={itemClient.data.totalPengguna} key={1}></StatisticCard>
-                <StatisticCard title="Total Ulasan" total={itemClient.data.totalUlasan} key={1}></StatisticCard>
-                
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 my-4 gap-6">
+                <StatisticCard 
+                    title="Total Cabang" 
+                    total={itemClient.data.totalCabang} 
+                    icon={<MapPin className="w-6 h-6" />} 
+                    color="success" 
+                    key={1}
+                />
+                <StatisticCard 
+                    title="Total Produk" 
+                    total={itemClient.data.totalProduk} 
+                    icon={<ShoppingBag className="w-6 h-6" />} 
+                    color="primary" 
+                    key={2}
+                />
+                <StatisticCard 
+                    title="Total Pengguna" 
+                    total={itemClient.data.totalPengguna} 
+                    icon={<Users className="w-6 h-6" />} 
+                    color="secondary" 
+                    key={3}
+                />
+                <StatisticCard 
+                    title="Total Ulasan" 
+                    total={itemClient.data.totalUlasan} 
+                    icon={<MessageSquare className="w-6 h-6" />} 
+                    color="warning" 
+                    key={4}
+                />
             </div>
         }
     </div>

@@ -23,8 +23,13 @@ import ManageProduk from './pages/dashboard/Produk/ManageProduk';
 import TokoPage from './pages/landing/TokoPage';
 import ProdukPage from './pages/landing/ProdukPage';
 import DetailProduk from './pages/dashboard/Produk/DetailProduk';
+import CreateProduk from './pages/dashboard/Produk/CreateProduk';
+import EditProduk from './pages/dashboard/Produk/EditProduk';
 import KategoriPage from './pages/landing/KategoriPage';
+import SearchPage from './pages/landing/SearchPage';
 import ManagePersonil from './pages/dashboard/ManagePersonil';
+import KeranjangPage from './pages/landing/KeranjangPage';
+import CheckoutPage from './pages/landing/CheckoutPage';
 import AuthLayout from './layouts/AuthLayout';
 
 function App() {
@@ -70,6 +75,8 @@ function App() {
           <Route path="/dashboard/manage-faq" element={<ManageFaq />} />
           <Route path="/dashboard/manage-sosial-media" element={<ManageSosialMedia />} />
           <Route path="/dashboard/manage-product" element={<ManageProduk />} />
+          <Route path="/dashboard/manage-product/create" element={<CreateProduk />} />
+          <Route path="/dashboard/manage-product/edit/:id" element={<EditProduk />} />
           <Route path="/dashboard/manage-product/:id" element={<DetailProduk />} />
           <Route path="/dashboard/manage-personels" element={<ManagePersonil />} />
         </Route>
@@ -78,7 +85,10 @@ function App() {
           <LandingLayout />}
         >
           <Route path="/" element={<LandingPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/category/:kategoriId" element={<KategoriPage />} />
+          <Route path="/keranjang" element={<KeranjangPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/:tokoSlug/:produkSlug" element={<ProdukPage />} />
           <Route path="/:slug" element={<TokoPage />} />
         </Route>
