@@ -14,6 +14,7 @@ import { MessageSquareText, ShoppingCart, Star, Share2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import SafeImage from '@/components/SafeImage';
+import { useCart } from '@/context/CartContext';
 
 const ProdukPage = () => {
     const {tokoSlug, produkSlug} = useParams();
@@ -21,6 +22,8 @@ const ProdukPage = () => {
     const [toko, setToko] = useState<Toko | null>(null)
     const [isLoading, setIsLoading] = useState(true);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { addToCart } = useCart();
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
 
     const fetchProduk = useCallback(async (slug: string) => {
         setIsLoading(true);
@@ -47,6 +50,18 @@ const ProdukPage = () => {
             setIsLoading(false);
         }
     }, [])
+
+    const handleAddToCart = async () => {
+        if (!produk || !toko) return;
+        setIsAddingToCart(true);
+        try {
+            await addToCart(toko.id, produk.id, 1);
+        } catch (error) {
+            console.error('Gagal menambahkan ke keranjang:', error);
+        } finally {
+            setIsAddingToCart(false);
+        }
+    };
 
     useEffect(() => {
         setProduk(null); 
@@ -207,16 +222,28 @@ const ProdukPage = () => {
                         <Divider className='my-2'/>
 
                         {/* CTA Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 mt-2">
-                            <a href={'https://wa.me/' + produk?.toko.nomor_hp} target='_blank' className='w-full'>
+                        <div className="flex flex-col gap-3 mt-2">
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <a href={'https://wa.me/' + produk?.toko.nomor_hp} target='_blank' className='w-full'>
+                                    <Button 
+                                        variant="solid" 
+                                        className='w-full font-bold text-sm bg-gradient-to-r from-success-600 to-emerald-600 hover:from-success-700 hover:to-emerald-700 text-white shadow-md shadow-success-500/20 py-6' 
+                                        radius="lg"
+                                    >
+                                        <ShoppingCart className="w-5 h-5 mr-1" /> Hubungi WA & Beli
+                                    </Button>
+                                </a>
                                 <Button 
-                                    variant="solid" 
-                                    className='w-full font-bold text-sm bg-gradient-to-r from-success-600 to-emerald-600 hover:from-success-700 hover:to-emerald-700 text-white shadow-md shadow-success-500/20 py-6' 
+                                    variant="bordered" 
+                                    color="success"
+                                    onPress={handleAddToCart}
+                                    isLoading={isAddingToCart}
+                                    className='w-full font-bold text-sm border-success-600 text-success-700 hover:bg-success-50 py-6' 
                                     radius="lg"
                                 >
-                                    <ShoppingCart className="w-5 h-5 mr-1" /> Hubungi WA & Beli
+                                    <ShoppingCart className="w-5 h-5 mr-1" /> Tambah ke Keranjang
                                 </Button>
-                            </a>
+                            </div>
                             <Button 
                                 variant="bordered" 
                                 onPress={onOpen} 

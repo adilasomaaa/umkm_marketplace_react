@@ -1,14 +1,16 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, User } from '@heroui/react'
+import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, User } from '@heroui/react'
 
 import Logo from '@/assets/logo2.png'
-import { Home, LogOut, SearchIcon } from 'lucide-react'
+import { Home, LogOut, SearchIcon, ShoppingCart } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { useCart } from '@/context/CartContext'
 import Avatar from '@/assets/avatar.jpg';
 import { useState } from 'react';
 
 const NavbarComponent = () => {
   const {user, logout} = useAuth()
+  const { cartCount } = useCart()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -45,6 +47,24 @@ const NavbarComponent = () => {
         />
       </NavbarContent>
       <NavbarContent justify="end">
+        <NavbarItem>
+          <Button
+            as={Link}
+            to="/keranjang"
+            isIconOnly
+            variant="light"
+            aria-label="Keranjang Belanja"
+            className="relative"
+          >
+            {cartCount > 0 ? (
+              <Badge content={cartCount} color="danger" size="sm" shape="circle" className="border-none font-bold text-[10px]">
+                <ShoppingCart className="w-5 h-5 text-success-600" />
+              </Badge>
+            ) : (
+              <ShoppingCart className="w-5 h-5 text-success-600" />
+            )}
+          </Button>
+        </NavbarItem>
         {user ? (
           <Dropdown>
             <DropdownTrigger>

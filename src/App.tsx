@@ -28,6 +28,8 @@ import EditProduk from './pages/dashboard/Produk/EditProduk';
 import KategoriPage from './pages/landing/KategoriPage';
 import SearchPage from './pages/landing/SearchPage';
 import ManagePersonil from './pages/dashboard/ManagePersonil';
+import KeranjangPage from './pages/landing/KeranjangPage';
+import CheckoutPage from './pages/landing/CheckoutPage';
 import AuthLayout from './layouts/AuthLayout';
 
 function App() {
@@ -85,6 +87,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/category/:kategoriId" element={<KategoriPage />} />
+          <Route path="/keranjang" element={<KeranjangPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/:tokoSlug/:produkSlug" element={<ProdukPage />} />
           <Route path="/:slug" element={<TokoPage />} />
         </Route>
