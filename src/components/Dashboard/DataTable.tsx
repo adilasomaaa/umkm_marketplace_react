@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import {
   Table,
@@ -78,6 +79,7 @@ export type Column<T> = {
   renderCell?: (item: T) => React.ReactNode;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
@@ -114,7 +116,7 @@ const DataTable = <T extends { id: React.Key;[key: string]: any }>({
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(initialVisibleColumns);
 
   const headerColumns = React.useMemo(() => {
-    let filteredCols = columns.filter((column) => {
+    const filteredCols = columns.filter((column) => {
       if (visibleColumns === 'all') return true;
       return Array.from(visibleColumns).includes(column.uid as string);
     });

@@ -1,0 +1,13 @@
+services:
+  umkm-frontend:
+    image: ghcr.io/adilasomaaa/umkm_marketplace_react:main
+    container_name: umkm-frontend
+    restart: always
+    networks:
+      - proxy_network
+    ports:
+      - "8081:80"
+
+networks:
+  proxy_network:
+    external: true

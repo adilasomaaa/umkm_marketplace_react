@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { http } from "../lib/fetcher";
 import type {
   Paginated__Name__Response,
