@@ -17,8 +17,8 @@ const LandingPage = () => {
       {/* Main Sections */}
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
           <main className="flex flex-col gap-8 w-full">
-            {/* Floating Category Section Overlapping Jumbotron */}
-            <div className="-mt-16 sm:-mt-24 mb-4 relative z-20">
+            {/* Floating Category Section with spacing below Jumbotron */}
+            <div className="mt-8 sm:mt-12 mb-4 relative z-20">
               <KategoriSection />
             </div>
             
