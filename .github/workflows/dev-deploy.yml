@@ -1,0 +1,26 @@
+name: Deploy Dev to Homeserver (Self-Hosted)
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Menggunakan runner yang diinstall di rumah
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file (Optional)
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" > .env
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL_DEV }}" >> .env
+
+      - name: Build and Restart Container
+        run: |
+          docker compose -f docker-compose.dev.yml down
+          docker compose -f docker-compose.dev.yml up -d --build
+          
+      - name: Cleanup old images
+        run: docker image prune -f
