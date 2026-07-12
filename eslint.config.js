@@ -24,6 +24,7 @@ export default tseslint.config([
       'no-case-declarations': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
       'react-refresh/only-export-components': 'warn',
+      'no-empty': 'warn',
     },
   },
 ])
